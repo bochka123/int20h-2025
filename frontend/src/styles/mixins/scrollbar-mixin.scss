@@ -1,0 +1,25 @@
+@use "@/styles/variables/color-variables" as c;
+
+@mixin scrollbar-style {
+  &::-webkit-scrollbar {
+    width: 20px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border: 7px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 12px;
+    background-color: rgba($color: c.$primary, $alpha: 0.1);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 7px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 12px;
+    background-color: rgba($color: c.$primary, $alpha: 0.7);
+
+    &:hover {
+      background-color: rgba($color: c.$primary, $alpha: 0.8);
+    }
+  }
+}

@@ -1,0 +1,42 @@
+@use "@/styles/variables/color-variables.scss" as c;
+@use "@/styles/variables/background-variables.scss" as b;
+
+.fileInput {
+  display: none;
+}
+
+.fileInputLabel {
+  position: absolute;
+  bottom: -10px;
+  right: -25px;
+
+  border-radius: 10px;
+  border: c.$primary solid 5px;
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: c.$light;
+  justify-content: center;
+  align-items: center;
+
+  background: url('src/resources/wood.jpg');
+  background-size: cover;
+
+  order: 100;
+
+  @include b.wood-darker-background-with-hover;
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.55);
+  }
+
+  & > svg {
+    color: c.$light;
+    width: 30px;
+    height: 30px;
+  }
+}

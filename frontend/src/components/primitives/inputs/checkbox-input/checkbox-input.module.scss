@@ -1,0 +1,35 @@
+@use "@/styles/variables/color-variables.scss" as c;
+@use "@/styles/variables/font-variables.scss" as t;
+@use "@/styles/variables/background-variables.scss" as b;
+
+.checkboxWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.checkbox {
+  all: unset;
+  padding: 10px;
+  border-radius: 10px;
+  border: c.$primary solid 5px;
+  position: relative;
+  cursor: pointer;
+
+  &:checked {
+
+    @include b.wood-dark-background;
+    color: c.$light;
+
+    &:before {
+      content: "✔";
+      position: absolute;
+      top: -5%;
+      left: 20%;
+    }
+  }
+}
+
+.label {
+  @include t.label-small;
+}

@@ -1,0 +1,61 @@
+@use "@/styles/variables/color-variables" as c;
+@use "@/styles/variables/font-variables" as t;
+@use "sass:color";
+
+.toast {
+  padding: 8px 20px 12px;
+
+  display: flex;
+  gap: 12px;
+  align-items: start;
+
+  animation: toast-in-bottom 400ms;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  &.small {
+    align-items: center;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.icon {
+  display: flex;
+}
+
+.toastInfo {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  & > .small {
+    @include t.label-medium;
+    color: c.$primary;
+  }
+}
+
+.closeIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: c.$primary;
+
+  &:hover {
+    color: color.mix(c.$primary, #000, 50%);
+    cursor: pointer;
+  }
+}
+
+@keyframes toast-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
