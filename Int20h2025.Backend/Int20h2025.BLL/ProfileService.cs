@@ -1,7 +1,6 @@
 ﻿namespace Int20h2025.BLL
 {
-    public class Class1
+    public class ProfileService
     {
-
     }
 }
