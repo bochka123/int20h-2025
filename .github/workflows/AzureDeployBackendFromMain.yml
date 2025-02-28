@@ -15,7 +15,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: backend
+        working-directory: Int20h2025.Backend
     steps:
     - name: 'Checkout GitHub Action' 
       uses: actions/checkout@main
