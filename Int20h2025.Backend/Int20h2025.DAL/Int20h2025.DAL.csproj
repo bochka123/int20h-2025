@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Int20h2025.Auth\Int20h2025.Auth.csproj" />
+    <ProjectReference Include="..\Int20h2025.Common\Int20h2025.Common.csproj" />
+  </ItemGroup>
+
+</Project>
