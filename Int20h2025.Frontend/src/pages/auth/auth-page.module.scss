@@ -4,7 +4,7 @@
 .form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .authContainer {
@@ -17,84 +17,104 @@
     overflow: hidden;
 
     & h2 {
-        font-size: 36px;
-        margin-bottom: 20px;
-        color: c.$primary;
+        font-size: 28px;
+        margin-bottom: 16px;
+        color: #37474F;
         @include sh.text-primary-medium;
     }
 }
 
 .container {
-    width: 500px;
+    width: 400px;
 }
 
 .authCard {
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    border-radius: 6px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    background-color: #ECEFF1;
+    color: #263238;
 }
 
 .inputGroup {
-    margin: 1rem 0;
+    margin: 0.8rem 0;
 }
 
-.authButton:hover {
-    background: #0056b3;
+.input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 2px solid #607D8B;
+    background-color: #F5F5F5;
+    color: #263238;
+    font-size: 14px;
+    transition: border 0.3s;
+
+    &:focus {
+        border-color: #37474F;
+        outline: none;
+    }
+}
+
+.input::placeholder {
+    color: #78909C;
+}
+
+.authButton {
+    background: #546E7A;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover {
+        background: darken(#546E7A, 10%);
+    }
 }
 
 .googleButton {
     width: 100%;
-    padding: 10px;
-    background: white;
-    color: #333;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
+    padding: 8px;
+    background: #CFD8DC;
+    color: #37474F;
+    border: 1px solid #B0BEC5;
+    border-radius: 4px;
+    font-size: 14px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+    gap: 8px;
+    margin-top: 8px;
     transition: background 0.3s;
-}
 
-.googleButton img {
-    width: 20px;
-    height: 20px;
-}
+    img {
+        width: 18px;
+        height: 18px;
+    }
 
-.googleButton:hover {
-    background: #f0f0f0;
-}
-
-.authFooter {
-    margin-top: 1rem;
-    font-size: 20px;
-    color: c.$primary;
-
-    & a {
-        color: c.$primary !important;
-        font-weight: bold;
+    &:hover {
+        background: #B0BEC5;
     }
 }
 
-.authFooter a {
-    color: #007bff;
-    text-decoration: none;
-}
+.authFooter {
+    margin-top: 0.8rem;
+    font-size: 14px;
+    color: #37474F;
 
-.authFooter a:hover {
-    text-decoration: underline;
-}
+    a {
+        color: #37474F !important;
+        font-weight: bold;
+        text-decoration: none;
 
-.background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
 
 .backgroundOverlay {
@@ -103,6 +123,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(236, 239, 241, 0.5);
     z-index: -1;
 }
