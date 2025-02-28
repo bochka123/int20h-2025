@@ -1,0 +1,28 @@
+@mixin wood-background {
+  background: url('src/resources/wood.jpg');
+  background-size: cover;
+}
+
+@mixin wood-dark-background {
+  background: url('src/resources/wood.jpg');
+  background-size: cover;
+  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.4);
+}
+
+@mixin wood-dark-background-with-hover {
+  background: url('src/resources/wood.jpg');
+  background-size: cover;
+  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.4);
+
+  &:hover {
+    box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.5);
+  }
+}
+
+@mixin wood-darker-background-with-hover {
+  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.5);
+
+  &:hover {
+    box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.55);
+  }
+}

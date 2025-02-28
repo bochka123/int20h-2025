@@ -1,0 +1,35 @@
+@mixin button-gray {
+    box-shadow: 10px 10px #00000025;
+}
+
+@mixin button-bottom-medium-gray {
+    box-shadow: 0 14px 0px #00000025, 0 8px 15px rgba($color: #000000, $alpha: 0.2);
+}
+
+@mixin button-bottom-medium-gray-transform {
+    box-shadow: 0 6px 0px #00000025, 0 6px 14px rgba($color: #000000, $alpha: 0.2);
+}
+
+@mixin button-bottom-small-gray {
+    box-shadow: 0 8px 0px #00000025, 0 6px 12px rgba($color: #000000, $alpha: 0.2);
+}
+
+@mixin button-bottom-small-gray-transform {
+    box-shadow: 0 5px 0px #00000025, 0 4px 11px rgba($color: #000000, $alpha: 0.2);
+}
+
+@mixin text-primary-large {
+    text-shadow: 3px 4px #3C2E2E;
+}
+
+@mixin text-primary-medium {
+    text-shadow: 2px 2px #3C2E2E;
+}
+
+@mixin text-primary-small {
+    text-shadow: 1.2px 1.2px #3C2E2E;
+}
+
+@mixin text-gray {
+    text-shadow: 3px 4px #484848;
+}

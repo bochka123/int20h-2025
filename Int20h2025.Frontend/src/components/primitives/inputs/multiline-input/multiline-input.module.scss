@@ -1,0 +1,46 @@
+@use "@/styles/variables/color-variables.scss" as c;
+@use "@/styles/variables/font-variables.scss" as t;
+@use "@/styles/variables/background-variables.scss" as b;
+@use "sass:color";
+
+.button {
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  border: c.$primary solid 5px;
+  color: c.$light;
+  resize: none;
+
+  @include b.wood-dark-background;
+}
+
+.button::placeholder {
+  color: c.$light;
+}
+
+.button[type="number"]::-webkit-inner-spin-button,
+.button[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.label {
+  @include t.label-small;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+}
+
+.maxLength {
+  position: absolute;
+  right: 8px;
+  bottom: 6px;
+  
+  color: color.mix(c.$primary, #000);
+  @include t.label-extra-small;
+}

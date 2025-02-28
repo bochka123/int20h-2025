@@ -1,0 +1,26 @@
+@use "@/styles/variables/color-variables.scss" as c;
+@use "@/styles/variables/font-variables.scss" as t;
+@use "@/styles/variables/background-variables.scss" as b;
+
+.selectWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  border: c.$primary solid 5px;
+  color: c.$light;
+
+  @include b.wood-dark-background;
+}
+
+.select::placeholder {
+  color: c.$light;
+}
+
+.label {
+  @include t.label-small;
+}

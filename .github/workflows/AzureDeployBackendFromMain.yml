@@ -1,0 +1,46 @@
+name: Deploy Backend from Main to Azure Web App
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+      id-token: write
+      contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: backend
+    steps:
+    - name: 'Checkout GitHub Action' 
+      uses: actions/checkout@main
+    
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: int20h.azurecr.io
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - run: |
+        docker build . -t int20h.azurecr.io/backend:${{ github.sha }}
+        docker push int20h.azurecr.io/backend:${{ github.sha }}   
+      
+    - uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'int20hbackend'
+        images: 'int20h.azurecr.io/backend:${{ github.sha }}'
+    
+    - name: Azure logout
+      run: |
+        az logout

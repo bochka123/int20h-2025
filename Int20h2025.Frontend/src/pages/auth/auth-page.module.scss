@@ -1,0 +1,108 @@
+@use "@/styles/variables/color-variables.scss" as c;
+@use '@/styles/variables/shadow-variables.scss' as sh;
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.authContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    max-height: 100%;
+    position: relative;
+    overflow: hidden;
+
+    & h2 {
+        font-size: 36px;
+        margin-bottom: 20px;
+        color: c.$primary;
+        @include sh.text-primary-medium;
+    }
+}
+
+.container {
+    width: 500px;
+}
+
+.authCard {
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.inputGroup {
+    margin: 1rem 0;
+}
+
+.authButton:hover {
+    background: #0056b3;
+}
+
+.googleButton {
+    width: 100%;
+    padding: 10px;
+    background: white;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+.googleButton img {
+    width: 20px;
+    height: 20px;
+}
+
+.googleButton:hover {
+    background: #f0f0f0;
+}
+
+.authFooter {
+    margin-top: 1rem;
+    font-size: 20px;
+    color: c.$primary;
+
+    & a {
+        color: c.$primary !important;
+        font-weight: bold;
+    }
+}
+
+.authFooter a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.authFooter a:hover {
+    text-decoration: underline;
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.backgroundOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.4);
+    z-index: -1;
+}

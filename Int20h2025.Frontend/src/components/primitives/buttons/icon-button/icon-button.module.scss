@@ -1,0 +1,125 @@
+@use "@/styles/variables/color-variables.scss" as c;
+@use "@/styles/variables/font-variables.scss" as t;
+@use "@/styles/variables/shadow-variables.scss" as sh;
+
+@mixin icon-button-main-style($color) {
+  background: c.$light;
+  color: $color;
+
+  @include sh.button-bottom-small-gray;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:active {
+    transform: translateY(2px);
+    @include sh.button-bottom-small-gray-transform;
+  }
+
+  &.outline-false {
+    outline: none;
+  }
+
+  &.transparent {
+    background-color: transparent;
+  }
+}
+
+// @mixin icon-button-hover-style($color, $level: 5) {
+//   &:hover {
+//     background: c.light($color, $level);
+//     color: $color;
+//     outline: 1px solid c.light($color, 3);
+
+//     &.outline-false {
+//       outline: none;
+//     }
+
+//     &.transparent {
+//       background-color: transparent;
+//     }
+//   }
+
+//   &.focused {
+//     background: $color;
+//     color: c.$text-icon-primary-white;
+//     outline: none;
+
+//     &.transparent {
+//       color: $color;
+//       background-color: transparent;
+//     }
+//   }
+// }
+
+.button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  padding: 2px;
+  border-radius: 4px;
+  outline-offset: -1px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &.primary {
+    @include icon-button-main-style(c.$primary);
+  }
+
+  &.medium {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+  }
+
+  //   &.red {
+  //     @include icon-button-main-style(c.$danger);
+  //   }
+
+  //   &.orange {
+  //     @include icon-button-main-style(c.$warning);
+  //   }
+
+  //   &.green {
+  //     @include icon-button-main-style(c.$success);
+  //   }
+
+  //   &.gray {
+  //     @include icon-button-main-style(c.$gray);
+  //   }
+
+  //   &.dark-gray {
+  //     @include icon-button-main-style(c.$text-icon-disabled-black-65);
+  //   }
+
+  //   &.hover-primary {
+  //     @include icon-button-hover-style(c.$primary, 4);
+  //   }
+
+  //   &.hover-red {
+  //     @include icon-button-hover-style(c.$danger);
+  //   }
+
+  //   &.hover-orange {
+  //     @include icon-button-hover-style(c.$warning);
+  //   }
+
+  //   &.hover-green {
+  //     @include icon-button-hover-style(c.$success);
+  //   }
+
+  //   &.hover-gray {
+  //     @include icon-button-hover-style(c.$gray);
+  //   }
+
+  //   &.hover-dark-gray {
+  //     @include icon-button-hover-style(c.$text-icon-primary-black);
+  //   }
+
+    &.disabled {
+      pointer-events: none;
+      background-color: c.$light-gray;
+    }
+}
