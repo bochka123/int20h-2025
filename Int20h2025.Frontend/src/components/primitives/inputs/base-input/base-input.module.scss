@@ -2,22 +2,22 @@
 @use "@/styles/variables/font-variables.scss" as t;
 @use "@/styles/variables/background-variables.scss" as b;
 
-.button {
+.input {
   width: 100%;
   padding: 8px;
   border-radius: 10px;
   border: c.$primary solid 5px;
   color: c.$light;
 
-  @include b.wood-dark-background;
+  @include b.dark-overlay-background;
 }
 
-.button::placeholder {
+.input::placeholder {
   color: c.$light;
 }
 
-.button[type="number"]::-webkit-inner-spin-button,
-.button[type="number"]::-webkit-outer-spin-button {
+.input[type="number"]::-webkit-inner-spin-button,
+.input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   width: 24px;
   height: 24px;

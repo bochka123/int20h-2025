@@ -3,7 +3,7 @@
 @use "@/styles/variables/background-variables.scss" as b;
 @use "sass:color";
 
-.button {
+.input {
   width: 100%;
   padding: 8px;
   border-radius: 10px;
@@ -11,15 +11,15 @@
   color: c.$light;
   resize: none;
 
-  @include b.wood-dark-background;
+  @include b.dark-overlay-background;
 }
 
-.button::placeholder {
+.input::placeholder {
   color: c.$light;
 }
 
-.button[type="number"]::-webkit-inner-spin-button,
-.button[type="number"]::-webkit-outer-spin-button {
+.input[type="number"]::-webkit-inner-spin-button,
+.input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   width: 24px;
   height: 24px;

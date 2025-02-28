@@ -18,7 +18,7 @@
 
   &:checked {
 
-    @include b.wood-dark-background;
+    @include b.dark-overlay-background;
     color: c.$light;
 
     &:before {

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Int20h2025.Common.Models.DTO.Profile;
 
 namespace Int20h2025.BLL.Mappers
 {
@@ -11,14 +12,7 @@ namespace Int20h2025.BLL.Mappers
 
         public void CreateMapForProfile()
         {
-            //CreateMap<BobrProfile, MyBobrProfileDTO>()
-            //.ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level));
-
-            //CreateMap<UpdateBobrProfileDTO, BobrProfile>();
-
-            //CreateMap<BobrProfile, AuthorDTO>();
-
-            //CreateMap<BobrLevel, BobrLevelDTO>();
+            CreateMap<DAL.Entities.Profile, ProfileDTO>();
         }
     }
 }

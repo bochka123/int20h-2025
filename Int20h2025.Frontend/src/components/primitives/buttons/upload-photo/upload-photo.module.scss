@@ -22,12 +22,11 @@
   justify-content: center;
   align-items: center;
 
-  background: url('src/resources/wood.jpg');
   background-size: cover;
 
   order: 100;
 
-  @include b.wood-darker-background-with-hover;
+  @include b.dark-overlay-background-hover;
 
   &:hover {
     cursor: pointer;

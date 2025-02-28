@@ -14,7 +14,7 @@
   border: c.$primary solid 5px;
   color: c.$light;
 
-  @include b.wood-dark-background;
+  @include b.dark-overlay-background;
 }
 
 .select::placeholder {

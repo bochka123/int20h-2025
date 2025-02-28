@@ -21,6 +21,7 @@ type FormNames = {
 type AuthPageFormProps = {
     authType: 'signIn' | 'signUp';
 }
+
 const AuthPageForm: FC<AuthPageFormProps> = ({ authType }) => {
     const [logIn] = useLoginMutation();
     const [signUp] = useRegisterMutation();
@@ -65,7 +66,7 @@ const AuthPageForm: FC<AuthPageFormProps> = ({ authType }) => {
                 .catch(() => addToast(ToastModeEnum.ERROR, 'Failed to register'));
     };
 
-    const onError: SubmitErrorHandler<FormNames> = (error): void => {
+    const onError: SubmitErrorHandler<FormNames> = (error): void => {        
         addToast(ToastModeEnum.ERROR, getFormErrorMessage(error));
     };
 

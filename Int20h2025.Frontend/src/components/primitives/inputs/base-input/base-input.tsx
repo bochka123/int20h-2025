@@ -22,7 +22,7 @@ const BaseInput: FC<BaseInputProps> = ({ value, onChange, labelText, placeholder
         <div>
             { labelText && <span className={styles.label}>{labelText}</span>}
             <input
-                className={styles.button}
+                className={styles.input}
                 value={value}
                 onChange={handleChange}
                 placeholder={placeholder}

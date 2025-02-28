@@ -1,27 +1,30 @@
 ﻿using Int20h2025.Auth.Interfaces;
 using Int20h2025.Auth.Models.DTO;
+using Int20h2025.BLL.Interfaces;
 using Int20h2025.Common.Models.Api;
+using Int20h2025.Common.Models.DTO.Profile;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Int20h2025.WebAPI.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthController(IEmailPasswordAuthService authService, IGoogleAuthService googleAuthService) : ControllerBase
+    public class AuthController(IEmailPasswordAuthService authService, IGoogleAuthService googleAuthService, IProfileService profileService) : ControllerBase
     {
         [HttpPost("register")]
         public async Task<ActionResult<ApiResponse>> Register([FromBody] UserPasswordModel model)
         {
             await authService.RegisterAsync(model);
-            //await accountService.EnsureProfileCreatedAsync();
-            return Ok(new ApiResponse(true));
+            var profile = await profileService.EnsureProfileCreatedAsync();
+            return Ok(new ApiResponse<ProfileDTO>(profile));
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<ApiResponse>> Login([FromBody] UserPasswordModel model)
         {
             await authService.LoginAsync(model);
-            return Ok(new ApiResponse(true));
+            var profile = await profileService.EnsureProfileCreatedAsync();
+            return Ok(new ApiResponse<ProfileDTO>(profile));
         }
 
         [HttpPost("logout")]
@@ -35,8 +38,8 @@ namespace Int20h2025.WebAPI.Controllers
         public async Task<ActionResult<ApiResponse>> Google([FromBody] GoogleSignModel model)
         {
             await googleAuthService.SignInAsync(model);
-            //await accountService.EnsureProfileCreatedAsync();
-            return Ok(new ApiResponse(true));
+            var profile = await profileService.EnsureProfileCreatedAsync();
+            return Ok(new ApiResponse<ProfileDTO>(profile));
         }
     }
 }

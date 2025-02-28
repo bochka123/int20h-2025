@@ -1,6 +1,9 @@
-﻿namespace Int20h2025.BLL.Interfaces
+﻿using Int20h2025.Common.Models.DTO.Profile;
+
+namespace Int20h2025.BLL.Interfaces
 {
-    interface IProfileService
+    public interface IProfileService
     {
+        Task<ProfileDTO> EnsureProfileCreatedAsync();
     }
 }

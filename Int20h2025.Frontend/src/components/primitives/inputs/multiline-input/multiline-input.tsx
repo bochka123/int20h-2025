@@ -41,7 +41,7 @@ const MultilineInput: FC<MultilineInputProps> = ({
                     <textarea
                         value={value}
                         onChange={handleChange}
-                        className={styles.button}
+                        className={styles.input}
                         maxLength={maxLength}
                         rows={rows}
                         cols={cols}

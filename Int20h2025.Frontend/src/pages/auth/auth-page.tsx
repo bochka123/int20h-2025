@@ -9,8 +9,8 @@ const AuthPage: FC = () => {
     
     return (
         <div className={styles.authContainer}>
-            <div className={styles.background} />
-            <div className={styles.backgroundOverlay} />
+            {/* <div className={styles.background} />
+            <div className={styles.backgroundOverlay} /> */}
             <div className={styles.container}>
                 <div className={styles.authCard}>
                     {authType === 'signIn' ? <h2>Sign In</h2> : <h2>Sign Up</h2>}
