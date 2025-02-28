@@ -1,0 +1,79 @@
+# .NET Core
+######################################
+# User-specific files
+.vs/
+.vscode/
+.idea/
+
+# User-specific configurations
+usersecrets/
+project.lock.json
+project.fragment.lock.json
+
+# Build output
+bin/
+obj/
+
+# .NET Core publish folder
+publish/
+
+# .NET Core test results
+TestResults/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# npm-related (React, Vite, Node.js)
+######################################
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+.vite/
+dist/
+
+# VS Code
+######################################
+.vscode/
+
+# Windows thumbnail cache
+Thumbs.db
+
+# macOS Finder directory settings
+.DS_Store
+
+# Logs and temporary files
+*.log
+*.log.*
+
+# Build directories and compiled files
+*.dll
+*.exe
+*.pdb
+*.so
+*.dylib
+*.app
+*.tar
+*.gz
+*.zip
+
+# JetBrains Rider/IntelliJ IDEA files
+.idea/
+
+# Vite build output (for React/Vite)
+dist/
+
+# System files
+######################################
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Linux
+*~
