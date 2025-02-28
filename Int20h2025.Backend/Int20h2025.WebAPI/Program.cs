@@ -1,11 +1,10 @@
+using Int20h2025.WebAPI.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddInt20hServices(builder.Configuration);
+builder.Services.AddInt20h2025AzureBlobStorage(builder.Configuration);
 
 var app = builder.Build();
 
@@ -16,10 +15,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<GlobalExceptionHandler>();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.SeedDatabase();
 
 app.Run();
