@@ -4,7 +4,7 @@
 .vs/
 .vscode/
 .idea/
-
+.env
 # User-specific configurations
 usersecrets/
 project.lock.json
