@@ -1,6 +1,8 @@
 ﻿using Azure.Storage.Blobs;
 using Int20h2025.Auth;
 using Int20h2025.BLL;
+using Int20h2025.BLL.Interfaces;
+using Int20h2025.BLL.Services;
 using Int20h2025.BLL.Settings;
 using Int20h2025.Common.Helpers;
 using Int20h2025.Dal.Helpers;
@@ -18,7 +20,7 @@ namespace Int20h2025.WebAPI.Extensions
     {
         public static IServiceCollection AddInt20hServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMicrosoftIdentityWebApiAuthentication(configuration, "AzureAd")
+            services.AddMicrosoftIdentityWebApiAuthentication(configuration, "Auth:AzureAd")
                 .EnableTokenAcquisitionToCallDownstreamApi()
                 .AddInMemoryTokenCaches();
 
@@ -36,8 +38,8 @@ namespace Int20h2025.WebAPI.Extensions
                     {
                         Implicit = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri($"{configuration["AzureAd:Instance"]}common/oauth2/v2.0/authorize"),
-                            Scopes = new Dictionary<string, string> { { "api://bobrintelligence_services/user_impersonation", "Default" } }
+                            AuthorizationUrl = new Uri($"{configuration["Auth:AzureAd:Instance"]}common/oauth2/v2.0/authorize"),
+                            Scopes = new Dictionary<string, string> { { $"api://{configuration["Auth:AzureAd:ApplicationIdUri"]}/user_impersonation", "Default" } }
                         }
                     }
                 });

@@ -1,5 +1,7 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
+using Int20h2025.BLL.Factories;
+using Int20h2025.BLL.Helpers;
 using Int20h2025.BLL.Interfaces;
 using Int20h2025.BLL.Mappers;
 using Int20h2025.BLL.Services;
@@ -14,6 +16,8 @@ namespace Int20h2025.BLL
     {
         public static IServiceCollection ConfigureBllServiceCollection(this IServiceCollection services)
         {
+            services.AddSingleton<TaskManagerFactory>();
+            services.AddSingleton<AiHelper>();
             services.ConfigureAiClient();
             services.AddScoped<IAiService, AiService>();
             services.AddScoped<IProfileService, ProfileService>();

@@ -7,13 +7,13 @@ using OpenAI.Chat;
 
 namespace Int20h2025.BLL.Services
 {
-    public class AiService(ChatClient client, IPromptService promptService) : IAiService
+    public class AiService(ChatClient client,, AiHelper aiHelper, IPromptService promptService) : IAiService
     {
         public async Task<AiResponse> ProcessRequestAsync(AiRequest request)
         {
             var messages = new List<ChatMessage>()
             {
-                new SystemChatMessage(AiHelper.GeneralPrompt),
+                new SystemChatMessage(aiHelper.GeneralPrompt),
             };
             var history = await promptService.GetHistoryAsync();
             messages.AddRange(history.Select(x => new AssistantChatMessage(x.ToString())));
