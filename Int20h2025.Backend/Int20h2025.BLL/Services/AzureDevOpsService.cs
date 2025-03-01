@@ -12,7 +12,7 @@ namespace Int20h2025.BLL.Services
     public class AzureDevOpsService(ITokenAcquisition tokenAcquisition) : ITaskManager
     {
         public string SystemName { get; init; } = "AzureDevOps";
-        private readonly string _devOpsOrgUrl = "https://dev.azure.com/oletk";
+        private readonly string _devOpsOrgUrl = "";
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
             switch (methodName)
@@ -123,7 +123,7 @@ namespace Int20h2025.BLL.Services
 
         private async Task<OperationResult> CreateTaskAsync(string title, string projectName, string assignedTo)
         {
-            var scopes = new[] { "bobrintelligence_services/.default" };
+            var scopes = new[] { "/.default" };
             var accessToken = await tokenAcquisition.GetAccessTokenForUserAsync(scopes);
 
             var credentials = new VssOAuthAccessTokenCredential(accessToken);
