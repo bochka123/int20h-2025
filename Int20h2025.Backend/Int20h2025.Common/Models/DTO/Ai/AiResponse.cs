@@ -2,5 +2,6 @@
 {
     public class AiResponse
     {
+        public string? Clarification { get; set; }
     }
 }
