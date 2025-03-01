@@ -6,14 +6,14 @@ import { apiSlice } from '@/services';
 
 export const authApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
-        login: builder.mutation<IApiResponseDto<null>, IAuthRequestDto>({
+        login: builder.mutation<IApiResponseDto<{ id: string }>, IAuthRequestDto>({
             query: (data) => ({
                 url: '/api/auth/login',
                 method: HttpType.POST,
                 body: data,
             }),
         }),
-        register: builder.mutation<IApiResponseDto<null>, IAuthRequestDto>({
+        register: builder.mutation<IApiResponseDto<{ id: string }>, IAuthRequestDto>({
             query: (data) => ({
                 url: '/api/auth/register',
                 method: HttpType.POST,
@@ -26,7 +26,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
                 method: HttpType.POST,
             }),
         }),
-        google: builder.mutation<IApiResponseDto<null>, IGoogleAuthRequestDto>({
+        google: builder.mutation<IApiResponseDto<{ id: string }>, IGoogleAuthRequestDto>({
             query: (data) => ({
                 url: '/api/auth/google',
                 method: HttpType.POST,
