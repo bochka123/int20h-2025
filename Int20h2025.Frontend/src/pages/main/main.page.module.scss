@@ -1,5 +1,5 @@
 @use "@/styles/variables/color-variables.scss" as c;
 
 .background {
-  background: c.$light;
+  background: c.light(c.$primary, 2);
 }

@@ -6,13 +6,9 @@
   justify-content: center;
   width: 100%;
 
-  background: c.light(c.$blue, 3);
+  background: c.$primary;
   border-radius: 10px;
   padding: 10px;
-
-  & > h1 {
-    color: c.$primary
-  }
 }
 
 .inputWrapper {
@@ -22,4 +18,8 @@
   gap: 8px;
   flex: 1;
   max-width: 500px;
+
+  & > h1 {
+    color: c.$light;
+  }
 }

@@ -4,8 +4,9 @@
   display: flex;
   height: 100%;
   width: 100%;
+  color: c.$light;
 
-  background: c.light(c.$blue, 2);
+  background: c.dark(c.$primary, 1);
   border-radius: 10px;
 
   padding: 10px;
