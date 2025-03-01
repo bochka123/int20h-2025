@@ -1,3 +1,5 @@
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC } from 'react';
 
 import styles from './loader.module.scss';
@@ -9,9 +11,8 @@ type LoaderProps = {
 const Loader: FC<LoaderProps> = ({ size = 100 }) => {
     return (
         <div className={styles.loaderWrapper}>
-            <img
-                src={''}
-                alt="Loading..."
+            <FontAwesomeIcon
+                icon={faSpinner}
                 className={styles.loaderImage}
                 style={{ width: size, height: size }}
             />

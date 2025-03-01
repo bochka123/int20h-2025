@@ -1,11 +1,11 @@
 import { faArrowRightFromBracket, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FC, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { IconButton, MultilineInput } from '@/components';
 import { useLogOutMutation, useProcessMutation } from '@/services';
 
 import styles from './main-section.module.scss';
-import { useNavigate } from 'react-router-dom';
 
 type MainSectionProps = {}
 const MainSection: FC<MainSectionProps> = () => {

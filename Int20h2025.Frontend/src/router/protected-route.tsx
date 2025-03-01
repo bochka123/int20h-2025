@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 
-import { Loader } from '@/components';
+import { LoaderPage } from '@/pages';
 import { useGetProfileQuery } from '@/services';
 import { setProfile } from '@/store/auth';
 
@@ -18,7 +18,7 @@ const ProtectedRoute: FC = () => {
 
     return (
         isLoading
-            ? <Loader />
+            ? <LoaderPage />
             : profile?.data.id
                 ? <Outlet />
                 : <Navigate to={'/auth'} />
