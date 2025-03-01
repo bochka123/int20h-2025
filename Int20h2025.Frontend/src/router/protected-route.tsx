@@ -7,9 +7,9 @@ const ProtectedRoute: FC = () => {
     const { id } = useProfileHook();
 
     return (
-            id
-                ? <Outlet />
-                : <Navigate to={'/auth'} />
+        id
+            ? <Outlet />
+            : <Navigate to={'/auth'} />
     );
 };
 
