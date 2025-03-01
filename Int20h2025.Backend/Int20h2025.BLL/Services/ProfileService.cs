@@ -3,12 +3,19 @@ using Int20h2025.Auth.Interfaces;
 using Int20h2025.BLL.Interfaces;
 using Int20h2025.Common.Models.DTO.Profile;
 using Int20h2025.DAL.Context;
+using Microsoft.EntityFrameworkCore;
 using Profile = Int20h2025.DAL.Entities.Profile;
 
 namespace Int20h2025.BLL.Services
 {
     public class ProfileService(Int20h2025Context context, IUserContextService userContextService, IMapper mapper) : IProfileService
     {
+        public async Task<ProfileDTO?> GetMyProfileAsync()
+        {
+            var profile = await context.Profiles.FirstOrDefaultAsync(x => x.Id == userContextService.UserId);
+            return profile == null ? null : mapper.Map<ProfileDTO>(profile);
+        }
+
         public async Task<ProfileDTO> EnsureProfileCreatedAsync()
         {
             var userId = userContextService.UserId;

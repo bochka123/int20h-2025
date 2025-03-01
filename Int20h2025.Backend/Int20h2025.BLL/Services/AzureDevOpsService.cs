@@ -5,23 +5,22 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.VisualStudio.Services.OAuth;
 using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Int20h2025.BLL.Services
 {
     public class AzureDevOpsService(ITokenAcquisition tokenAcquisition) : ITaskManager
     {
         public string SystemName { get; init; } = "AzureDevOps";
-
-        private readonly string _devOpsOrgUrl = "";
-
-        public async Task<OperationResult> ExecuteMethodAsync(string methodName, object[] parameters)
+        private readonly string _devOpsOrgUrl = "https://dev.azure.com/oletk";
+        public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
             switch (methodName)
             {
                 case "CreateTask":
-                    var title = parameters[0].ToString();
-                    var projectName = parameters[1].ToString();
-                    var assignedTo = parameters[2].ToString();
+                    var title = parameters["title"].ToString();
+                    var projectName = parameters["projectName"].ToString();
+                    var assignedTo = parameters["assignedTo"].ToString();
                     return await CreateTaskAsync(title, projectName, assignedTo);
 
                 case "UpdateTask":
@@ -124,7 +123,7 @@ namespace Int20h2025.BLL.Services
 
         private async Task<OperationResult> CreateTaskAsync(string title, string projectName, string assignedTo)
         {
-            var scopes = new[] { "/.default" };
+            var scopes = new[] { "bobrintelligence_services/.default" };
             var accessToken = await tokenAcquisition.GetAccessTokenForUserAsync(scopes);
 
             var credentials = new VssOAuthAccessTokenCredential(accessToken);

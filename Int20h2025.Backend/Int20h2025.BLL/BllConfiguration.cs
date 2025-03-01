@@ -21,6 +21,7 @@ namespace Int20h2025.BLL
             services.ConfigureAiClient();
             services.AddScoped<IAiService, AiService>();
             services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<IPromptService, PromptService>();
             services.AddAutoMapper(typeof(MapperProfile));
             return services;
         }

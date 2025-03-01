@@ -2,6 +2,6 @@
 {
     public class AiResponse
     {
-        public string? Clarification { get; set; }
+        public string? Message { get; set; }
     }
 }
