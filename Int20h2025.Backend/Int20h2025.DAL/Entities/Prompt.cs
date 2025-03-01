@@ -1,5 +1,4 @@
-﻿using Int20h2025.Auth.Entities;
-using Int20h2025.DAL.Entities.Base;
+﻿using Int20h2025.DAL.Entities.Base;
 
 namespace Int20h2025.DAL.Entities
 {
@@ -10,10 +9,10 @@ namespace Int20h2025.DAL.Entities
         public DateTime UpdatedOn { get; set; }
 
         public Guid ProfileId { get; set; }
-        public Profile Profile { get; set; }
-        public Guid SystemId { get; set; }
-        public System System {  get; set; }
-        public string Text { get; set; }
-        public List<PromptHistory> History { get; set; } 
+        public Profile Profile { get; set; } = null!;
+        public string Text { get; set; } = string.Empty;
+        public string? Result { get; set; }
+        public bool Success { get; set; }
+        public List<PromptHistory> History { get; set; } = [];
     }
 }

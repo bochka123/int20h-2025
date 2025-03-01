@@ -9,34 +9,40 @@ namespace Int20h2025.BLL.Services
 {
     public class AiService(ChatClient client, AiHelper aiHelper) : IAiService
     {
-        public async Task<AiResponse> ProcessRequestAsync(AiRequest request)
+        private readonly List<ChatMessage> ChatMessages = [aiHelper.GeneralPrompt];
+        public async Task<Command> ProccessUserPromptAsync(string prompt, IEnumerable<string> historyMessages)
         {
-            var messages = new List<ChatMessage>()
+            ChatMessages.AddRange(historyMessages.Select(x => new AssistantChatMessage(x)));
+            ChatMessages.Add(new UserChatMessage(prompt));
+            var stringResp = await ReuqestAiAsync()
+                ?? throw new InternalPointerBobrException("Unknown ai error occured.");
+
+            return JsonConvert.DeserializeObject<Command>(stringResp) ?? throw new InternalPointerBobrException("Unknown ai error occured.");
+        }
+
+        public async Task<AiResponse> ProcessUserResponseAsync(bool ok, string response)
+        {
+            var prompt = aiHelper.GetUserResponsePrompt(ok, response);
+            ChatMessages.Add(new UserChatMessage(prompt));
+            var userResp = await ReuqestAiAsync();
+
+            var command =  JsonConvert.DeserializeObject<Command>(userResp) ?? throw new InternalPointerBobrException("Unknown ai error occured.");
+            return new AiResponse
             {
-                new SystemChatMessage(aiHelper.GeneralPrompt),
-                new UserChatMessage(request.Prompt)
+                Message = command.Clarification
             };
-            var chatResponse = await client.CompleteChatAsync(messages);
+        }
+
+        private async Task<string> ReuqestAiAsync()
+        {
+            var chatResponse = await client.CompleteChatAsync(ChatMessages);
             var stringResp = chatResponse.Value.Content.First().Text;
             if (string.IsNullOrEmpty(stringResp))
             {
                 throw new InternalPointerBobrException("Answer from ai isn't parsed correctly.");
             }
-            var command = JsonConvert.DeserializeObject<Command>(stringResp) 
-                ?? throw new InternalPointerBobrException("Unknown ai error occured.");
 
-            if (command.Clarification != null)
-            {
-                return new AiResponse
-                {
-                    Clarification = command.Clarification
-                };
-            }
-
-            return new AiResponse
-            {
-                Clarification = "lol"
-            };
+            return stringResp;
         }
     }
 }

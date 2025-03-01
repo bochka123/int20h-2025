@@ -4,6 +4,7 @@ namespace Int20h2025.BLL.Interfaces
 {
     public interface IAiService
     {
-        Task<AiResponse> ProcessRequestAsync(AiRequest request);
+        Task<Command> ProccessUserPromptAsync(string prompt, IEnumerable<string> historyMessages);
+        Task<AiResponse> ProcessUserResponseAsync(bool ok, string response);
     }
 }
