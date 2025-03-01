@@ -1,4 +1,5 @@
-﻿using Int20h2025.BLL.Helpers;
+﻿using Int20h2025.BLL.Factories;
+using Int20h2025.BLL.Helpers;
 using Int20h2025.BLL.Interfaces;
 using Int20h2025.Common.Exceptions;
 using Int20h2025.Common.Models.DTO.Ai;
@@ -7,7 +8,7 @@ using OpenAI.Chat;
 
 namespace Int20h2025.BLL.Services
 {
-    public class AiService(ChatClient client,, AiHelper aiHelper, IPromptService promptService) : IAiService
+    public class AiService(ChatClient client, AiHelper aiHelper, IPromptService promptService, TaskManagerFactory taskManagerFactory) : IAiService
     {
         public async Task<AiResponse> ProcessRequestAsync(AiRequest request)
         {
@@ -25,20 +26,28 @@ namespace Int20h2025.BLL.Services
 
             if (command.Clarification != null)
             {
-                //await promptService.CreateAsync(new Common.Models.DTO.Prompt.PromptDTO
-                //{
-
-                //});
+                await promptService.CreateAsync(new Common.Models.DTO.Prompt.PromptDTO
+                {
+                    Success = false,
+                    Text = request.Prompt,
+                    Result = command.Clarification
+                });
                 return new AiResponse
                 {
                     Message = command.Clarification
                 };
             }
 
-            var respMessage = "";
-            messages.Add(new AssistantChatMessage(respMessage));
+            var taskManager = taskManagerFactory.GetTaskManager(Common.Enums.TaskManagersEnum.AzureDevOps);
+            var response = await taskManager.ExecuteMethodAsync(command.Method, command.Parameters);
+            messages.Add(new UserChatMessage(response.ToString()));
             var userResp = await ReuqestAiAsync(messages);
-            //await promptService.CreateAsync();
+            await promptService.CreateAsync(new Common.Models.DTO.Prompt.PromptDTO
+            {
+                Text = request.Prompt,
+                Result = userResp,
+                Success = true
+            });
             return new AiResponse
             {
                 Message = userResp

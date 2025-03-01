@@ -14,16 +14,15 @@ namespace Int20h2025.BLL.Mappers
 
         public void CreateMapForProfile()
         {
-            CreateMap<Profile, ProfileDTO>()
-                .ReverseMap();
-
-            CreateMap<ProfileDTO, PromptHistory>();
+            CreateMap<Profile, ProfileDTO>();
         }
 
         public void CreateMapForPrompts()
         {
             CreateMap<Prompt, PromptDTO>()
                 .ReverseMap();
+
+            CreateMap<PromptDTO, PromptHistory>();
         }
     }
 }

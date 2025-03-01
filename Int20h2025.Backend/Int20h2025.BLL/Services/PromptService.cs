@@ -12,13 +12,13 @@ namespace Int20h2025.BLL.Services
     {
         public async Task<ICollection<PromptDTO>> GetHistoryAsync()
         {
-            return await context.Prompts
+            var prompts = await context.Prompts
                 .Where(x => x.ProfileId == userContext.UserId)
                 .OrderByDescending(x => x.UpdatedOn)
                 .Take(10)
-                .Select(mapper.Map<PromptDTO>)
-                .AsQueryable()
                 .ToListAsync();
+
+            return mapper.Map<ICollection<PromptDTO>>(prompts);
         }
 
         public async Task CreateAsync(PromptDTO promptDTO)
