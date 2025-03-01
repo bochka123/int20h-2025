@@ -1,15 +1,27 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 
-import { useProfileHook } from '@/hooks';
+import { Loader } from '@/components';
+import { useGetProfileQuery } from '@/services';
+import { setProfile } from '@/store/auth';
 
 const ProtectedRoute: FC = () => {
-    const { id } = useProfileHook();
+    const { data: profile, isLoading } = useGetProfileQuery();
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (!isLoading && profile) {
+            dispatch(setProfile({ id: profile.data.id }));
+        }
+    }, [dispatch, isLoading, profile]);
 
     return (
-        id
-            ? <Outlet />
-            : <Navigate to={'/auth'} />
+        isLoading
+            ? <Loader />
+            : profile?.data.id
+                ? <Outlet />
+                : <Navigate to={'/auth'} />
     );
 };
 
