@@ -2,6 +2,15 @@
 @use "@/styles/variables/font-variables.scss" as t;
 @use "@/styles/variables/shadow-variables.scss" as sh;
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 @mixin icon-button-main-style($color) {
   background: c.dark(c.$blue, 1);
   color: $color;
@@ -49,5 +58,9 @@
     padding: 10px 20px;
     border-radius: 8px;
     font-size: 20px;
+  }
+
+  & .loader {
+    animation: spin 1s linear infinite;
   }
 }
