@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { selectCurrentId } from '@/store/auth';
 
-const useProfileHook = (): unknown => {
+const useProfileHook = (): { id: string } => {
     const id = useSelector(selectCurrentId);
 
     return useMemo(() => ({
