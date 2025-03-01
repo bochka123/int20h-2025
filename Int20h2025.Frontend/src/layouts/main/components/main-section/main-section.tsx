@@ -13,8 +13,8 @@ const MainSection: FC<MainSectionProps> = () => {
     return (
         <div className={styles.mainSectionWrapper}>
             <div className={styles.inputWrapper}>
-                <MultilineInput value={message} onChange={setMessage} />
-                <IconButton icon={faPaperPlane}/>
+                <MultilineInput value={message} onChange={setMessage} rows={2} />
+                <IconButton icon={faPaperPlane} />
             </div>
         </div>
     );

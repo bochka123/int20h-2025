@@ -1,6 +1,42 @@
-$primary: #007bff;
-$secondary: #6c757d; 
-$gray: #7C7D7C;
-$light-gray: #b0aba5;
-$light: #EDC39D;
+@use "sass:color";
+
+$primary: #223440;
+
+$secondary: #5D7A8C;
+
+$blue: #BACBD9;
+
+$dark-blue: #1D1340;
+
+$light: #F2F2F2;
 $white: #FFF;
+
+@function light($color, $level) {
+  @if $level == 1 {
+    @return color.mix($color, #fff, 90%);
+  } @else if $level == 2 {
+    @return color.mix($color, #fff, 75%);
+  } @else if $level == 3 {
+    @return color.mix($color, #fff, 50%);
+  } @else if $level == 4 {
+    @return color.mix($color, #fff, 25%);
+  } @else if $level == 5 {
+    @return color.mix($color, #fff, 15%);
+  } @else if $level == 6 {
+    @return color.mix($color, #fff, 5%);
+  }
+}
+
+@function dark($color, $level) {
+  @if $level == 1 {
+    @return color.mix($color, #000, 90%);
+  } @else if $level == 2 {
+    @return color.mix($color, #000, 75%);
+  } @else if $level == 3 {
+    @return color.mix($color, #000, 50%);
+  } @else if $level == 4 {
+    @return color.mix($color, #000, 25%);
+  } @else if $level == 5 {
+    @return color.mix($color, #000, 15%);
+  }
+}
