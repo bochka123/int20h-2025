@@ -1,13 +1,42 @@
-﻿using Int20h2025.BLL.Interfaces;
+﻿using Int20h2025.BLL.Helpers;
+using Int20h2025.BLL.Interfaces;
+using Int20h2025.Common.Exceptions;
 using Int20h2025.Common.Models.DTO.Ai;
+using Newtonsoft.Json;
+using OpenAI.Chat;
 
 namespace Int20h2025.BLL.Services
 {
-    public class AiService : IAiService
+    public class AiService(ChatClient client) : IAiService
     {
-        public Task<AiResponse> ProcessRequestAsync(AiRequest request)
+        public async Task<AiResponse> ProcessRequestAsync(AiRequest request)
         {
-            throw new NotImplementedException();
+            var messages = new List<ChatMessage>()
+            {
+                new SystemChatMessage(AiHelper.GeneralPrompt),
+                new UserChatMessage(request.Prompt)
+            };
+            var chatResponse = await client.CompleteChatAsync(messages);
+            var stringResp = chatResponse.Value.Content.First().Text;
+            if (string.IsNullOrEmpty(stringResp))
+            {
+                throw new InternalPointerBobrException("Answer from ai isn't parsed correctly.");
+            }
+            var command = JsonConvert.DeserializeObject<Command>(stringResp) 
+                ?? throw new InternalPointerBobrException("Unknown ai error occured.");
+
+            if (command.Clarification != null)
+            {
+                return new AiResponse
+                {
+                    Clarification = command.Clarification
+                };
+            }
+
+            return new AiResponse
+            {
+                Clarification = "lol"
+            };
         }
     }
 }
