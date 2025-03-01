@@ -15,6 +15,21 @@
   white-space: nowrap;
   @include t.label-small;
   color: c.$light;
+  background: c.dark(c.$blue, 3);
+
+  &:hover {
+    cursor: pointer;
+    background: c.dark(c.$blue, 4);
+  }
+
+  &:active {
+    background: c.dark(c.$blue, 5);
+  }
+
+  &:disabled {
+    pointer-events: none;
+    background: c.dark(c.$blue, 5);
+  }
 
   &.loading > .text {
     color: transparent;
@@ -47,16 +62,4 @@
     border-radius: 8px;
     @include t.button-large;
   }
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  &:disabled {
-    pointer-events: none;
-  }
-}
-
-.hover:hover {
-  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.55);
 }

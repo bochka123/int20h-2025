@@ -1,5 +1,5 @@
 import { useMsal } from '@azure/msal-react';
-import { faM } from '@fortawesome/free-solid-svg-icons';
+import { faMicrosoft } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC } from 'react';
 import { useDispatch } from 'react-redux';
@@ -43,7 +43,7 @@ const AuthButton: FC<AuthButtonProps> = () => {
   };
 
   return (
-    <BaseButton onClick={login}>Login with Microsoft <FontAwesomeIcon icon={faM} /></BaseButton>
+    <BaseButton onClick={login}>Login with Microsoft <FontAwesomeIcon icon={faMicrosoft} /></BaseButton>
   );
 };
 
