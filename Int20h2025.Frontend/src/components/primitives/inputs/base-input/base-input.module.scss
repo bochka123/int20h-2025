@@ -8,12 +8,13 @@
   border-radius: 10px;
   border: c.$primary solid 5px;
   color: c.$light;
+  background: c.light(c.$primary, 2);
 
   @include b.dark-overlay-background;
 }
 
 .input::placeholder {
-  color: c.$light;
+  color: rgba(c.$light, 60%);
 }
 
 .input[type="number"]::-webkit-inner-spin-button,
