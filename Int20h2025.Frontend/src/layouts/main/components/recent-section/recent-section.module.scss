@@ -1,4 +1,5 @@
 @use "@/styles/variables/color-variables.scss" as c;
+@use "@/styles/mixins/scrollbar-mixin.scss" as scrollbar;
 
 .recentSectionWrapper {
   display: flex;
@@ -14,6 +15,9 @@
   border-radius: 10px;
 
   padding: 10px;
+
+  overflow-y: auto;
+  @include scrollbar.scrollbar-style(c.dark(c.$blue, 3));
 
   & > p {
     width: 100%;

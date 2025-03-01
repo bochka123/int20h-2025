@@ -1,6 +1,6 @@
 @use "@/styles/variables/color-variables" as c;
 
-@mixin scrollbar-style {
+@mixin scrollbar-style($thumb-color: c.$primary) {
   &::-webkit-scrollbar {
     width: 20px;
   }
@@ -9,17 +9,17 @@
     border: 7px solid rgba(0, 0, 0, 0);
     background-clip: padding-box;
     border-radius: 12px;
-    background-color: rgba($color: c.$primary, $alpha: 0.1);
+    background-color: rgba($color: $thumb-color, $alpha: 0.1);
   }
 
   &::-webkit-scrollbar-thumb {
     border: 7px solid rgba(0, 0, 0, 0);
     background-clip: padding-box;
     border-radius: 12px;
-    background-color: rgba($color: c.$primary, $alpha: 0.7);
+    background-color: rgba($color: $thumb-color, $alpha: 0.7);
 
     &:hover {
-      background-color: rgba($color: c.$primary, $alpha: 0.8);
+      background-color: rgba($color: $thumb-color, $alpha: 0.8);
     }
   }
 }

@@ -15,8 +15,20 @@ const RecentSection: FC<RecentSectionProps> = () => {
             <p>Recent</p>
             <div className={styles.messagesContainer}>
                 {
+                    recentMessages[0] &&
+                    <Message
+                        isHighlighted={true}
+                        key={'recent-message'}
+                    >
+                        {recentMessages[0].message}
+                    </Message>
+                }
+                {
                     recentMessages.map((message, index) => (
-                        <Message key={`recent-message-${index}`}>
+                        index !== 0 &&
+                        <Message
+                            key={`recent-message-${index}`}
+                        >
                             {message.message}
                         </Message>
                     ))
