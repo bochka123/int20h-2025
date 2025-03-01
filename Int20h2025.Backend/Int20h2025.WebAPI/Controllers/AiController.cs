@@ -2,13 +2,14 @@
 using Int20h2025.BLL.Interfaces;
 using Int20h2025.Common.Models.Api;
 using Int20h2025.Common.Models.DTO.Ai;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Int20h2025.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [MainAuth]
+    [Authorize]
     public class AiController(IAiService aiService) : ControllerBase
     {
         [HttpPost("process")]
