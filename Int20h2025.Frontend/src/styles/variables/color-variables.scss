@@ -15,14 +15,22 @@ $white: #FFF;
   @if $level == 1 {
     @return color.mix($color, #fff, 90%);
   } @else if $level == 2 {
-    @return color.mix($color, #fff, 75%);
+    @return color.mix($color, #fff, 80%);
   } @else if $level == 3 {
-    @return color.mix($color, #fff, 50%);
+    @return color.mix($color, #fff, 70%);
   } @else if $level == 4 {
-    @return color.mix($color, #fff, 25%);
+    @return color.mix($color, #fff, 60%);
   } @else if $level == 5 {
-    @return color.mix($color, #fff, 15%);
+    @return color.mix($color, #fff, 50%);
   } @else if $level == 6 {
+    @return color.mix($color, #fff, 40%);
+  } @else if $level == 7 {
+    @return color.mix($color, #fff, 30%);
+  } @else if $level == 8 {
+    @return color.mix($color, #fff, 20%);
+  } @else if $level == 9 {
+    @return color.mix($color, #fff, 10%);
+  } @else if $level == 10 {
     @return color.mix($color, #fff, 5%);
   }
 }
@@ -31,12 +39,22 @@ $white: #FFF;
   @if $level == 1 {
     @return color.mix($color, #000, 90%);
   } @else if $level == 2 {
-    @return color.mix($color, #000, 75%);
+    @return color.mix($color, #000, 80%);
   } @else if $level == 3 {
-    @return color.mix($color, #000, 50%);
+    @return color.mix($color, #000, 70%);
   } @else if $level == 4 {
-    @return color.mix($color, #000, 25%);
+    @return color.mix($color, #000, 60%);
   } @else if $level == 5 {
-    @return color.mix($color, #000, 15%);
+    @return color.mix($color, #000, 50%);
+  } @else if $level == 6 {
+    @return color.mix($color, #000, 40%);
+  } @else if $level == 7 {
+    @return color.mix($color, #000, 30%);
+  } @else if $level == 8 {
+    @return color.mix($color, #000, 20%);
+  } @else if $level == 9 {
+    @return color.mix($color, #000, 10%);
+  } @else if $level == 10 {
+    @return color.mix($color, #000, 5%);
   }
 }

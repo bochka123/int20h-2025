@@ -12,6 +12,7 @@ type MultilineInputType = {
     maxLength?: number,
     rows?: number,
     cols?: number,
+    classes?: string,
 };
 
 type TextAreaHTMLProps = HTMLProps<HTMLTextAreaElement>
@@ -27,6 +28,7 @@ const MultilineInput: FC<MultilineInputProps> = ({
     maxLength,
     rows = 1,
     cols = 1,
+    classes,
     ...props
 }) => {
 
@@ -46,7 +48,7 @@ const MultilineInput: FC<MultilineInputProps> = ({
     };
 
     return (
-        <div>
+        <div className={classes}>
             { labelText && <span className={styles.label}>{labelText}</span>}
                 <div className={styles.inputContainer}>
                     <textarea

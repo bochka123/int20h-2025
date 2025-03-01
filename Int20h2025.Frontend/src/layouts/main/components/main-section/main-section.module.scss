@@ -11,15 +11,42 @@
   padding: 10px;
 }
 
-.inputWrapper {
+.generalWrapper {
   display: flex;
   flex-direction: column;
-  text-align: center;
-  gap: 8px;
   flex: 1;
   max-width: 500px;
+  text-align: center;
+  gap: 10px;
 
   & > h1 {
     color: c.$light;
+  }
+}
+
+.inputWrapper {
+  display: flex;
+  gap: 8px;
+  position: relative;
+
+  & > .textarea {
+    width: 100%;
+
+    & textarea {
+      padding-right: 60px;
+    }
+  }
+
+  & > .sendButtonWrapper {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+
+    & > .sendButton {
+      z-index: 10;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+    }
   }
 }

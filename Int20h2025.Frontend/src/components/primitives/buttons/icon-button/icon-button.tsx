@@ -17,6 +17,7 @@ type IconButtonProps = {
         e: MouseEvent<HTMLButtonElement> | FormEvent<HTMLFormElement>
     ) => void,
     disabled?: boolean,
+    classes?: string,
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 const IconButton: FC<IconButtonProps> = ({
@@ -28,6 +29,7 @@ const IconButton: FC<IconButtonProps> = ({
     transparent = false,
     onClick,
     disabled,
+    classes,
     ...props
 }) => {
 
@@ -56,6 +58,7 @@ const IconButton: FC<IconButtonProps> = ({
                 ${isFocused ? styles['focused'] : ''}
                 ${transparent ? styles['transparent'] : ''}
                 ${disabled ? styles.disabled : ''}
+                ${classes}
             `}
             onClick={(e) => handleClick(e)}
             onMouseDown={handleFocus}
