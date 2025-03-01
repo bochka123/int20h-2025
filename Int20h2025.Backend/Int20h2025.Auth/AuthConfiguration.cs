@@ -17,6 +17,7 @@ namespace Int20h2025.Auth
             services.AddScoped<IRefreshTokenService, RefreshTokenService>();
             services.AddScoped<IEmailPasswordAuthService, EmailPasswordAuthService>();
             services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+            services.AddScoped<IMicrosoftAuthService, MicrosoftAuthService>();
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddSingleton<IConnectionMultiplexer>(x =>
             {

@@ -1,17 +1,18 @@
 import { FC } from 'react';
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-// import { useDispatch } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
 import { InputTypes, ToastModeEnum } from '@/common';
 import { BaseButton, BaseInput } from '@/components';
 import { getFormErrorMessage } from '@/helpers';
 import { useToast } from '@/hooks';
 import { IAuthRequestDto } from '@/models/requests';
 import {  useLoginMutation, useRegisterMutation } from '@/services';
+import { setProfile } from '@/store/auth';
 
 import styles from './auth-page.module.scss';
-import { GoogleAuthButton } from './components';
+import { GoogleAuthButton, MicrosoftAuthButton } from './components';
 
 type FormNames = {
     email: string;
@@ -25,11 +26,9 @@ type AuthPageFormProps = {
 const AuthPageForm: FC<AuthPageFormProps> = ({ authType }) => {
     const [logIn] = useLoginMutation();
     const [signUp] = useRegisterMutation();
-    // const [fetchProfile] = useLazyGetMyProfileQuery();
     const { addToast } = useToast();
-    // const dispatch = useDispatch();
-
-    // const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { handleSubmit, control } = useForm<FormNames>();
 
@@ -42,26 +41,16 @@ const AuthPageForm: FC<AuthPageFormProps> = ({ authType }) => {
         authType === 'signIn'
             ? logIn(requestData)
                 .unwrap()
-                .then(() => {
-                    // fetchProfile()
-                    //     .unwrap()
-                    //     .then(profileData => {
-                    //         dispatch(setProfile(profileData.data));
-                    //         dispatch(setUrl(profileData.data));
-                    //         navigate('/');
-                    //     });
+                .then((res) => {
+                    dispatch(setProfile({ id: res.data.id }));
+                    navigate('/');
                 })
                 .catch(() => addToast(ToastModeEnum.ERROR, 'Failed to log in'))
             : signUp(requestData)
                 .unwrap()
-                .then(() => {
-                    // fetchProfile()
-                    //     .unwrap()
-                    //     .then(profileData => {
-                    //         dispatch(setProfile(profileData.data));
-                    //         dispatch(setUrl(profileData.data));
-                    //         navigate('/');
-                    //     });
+                .then((res) => {
+                    dispatch(setProfile({ id: res.data.id }));
+                    navigate('/');
                 })
                 .catch(() => addToast(ToastModeEnum.ERROR, 'Failed to register'));
     };
@@ -99,6 +88,7 @@ const AuthPageForm: FC<AuthPageFormProps> = ({ authType }) => {
                 {authType === 'signIn' ? 'Login' : 'Register'}
             </BaseButton>
             <GoogleAuthButton />
+            <MicrosoftAuthButton />
         </form>
     );
 };

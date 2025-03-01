@@ -10,6 +10,8 @@ namespace Int20h2025.DAL.Context
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Profile> Profiles { get; set; }
+        public DbSet<Prompt> Prompts { get; set; }
+        public DbSet<PromptHistory> PromptHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,6 +21,18 @@ namespace Int20h2025.DAL.Context
                 .HasOne(p => p.User)
                 .WithOne()
                 .HasForeignKey<Profile>(p => p.Id);
+
+            modelBuilder.Entity<Prompt>()
+                .HasOne(p => p.Profile)
+                .WithMany(u => u.Prompts)
+                .HasForeignKey(p => p.ProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PromptHistory>()
+                .HasOne(ph => ph.Prompt)
+                .WithMany(p => p.History)
+                .HasForeignKey(ph => ph.PromptId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

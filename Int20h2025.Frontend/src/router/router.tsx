@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 
+import { MainLayout } from '@/layouts';
 import { AuthPage, MainPage } from '@/pages';
 import { ProtectedRoute } from '@/router/protected-route.tsx';
 
@@ -10,7 +11,10 @@ export const router = createBrowserRouter([
             {
                 element: <MainPage />,
                 children: [
-
+                    {
+                        path: '',
+                        element: <MainLayout />,
+                    }
                 ]
             },
         ]

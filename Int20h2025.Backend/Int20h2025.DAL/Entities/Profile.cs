@@ -10,5 +10,6 @@ namespace Int20h2025.DAL.Entities
         public DateTime UpdatedOn { get; set; }
 
         public User User { get; set; } = null!;
+        public List<Prompt> Prompts { get; set; } = [];
     }
 }

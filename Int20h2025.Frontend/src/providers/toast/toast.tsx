@@ -20,7 +20,7 @@ const ToastProvider: FC<ToastProviderProps> = ({ children }) => {
         mode: ToastModeEnum,
         title: string,
         message = '',
-        delay = 1000,
+        delay = 3000,
     ): void => {
         const id = uuid();
 

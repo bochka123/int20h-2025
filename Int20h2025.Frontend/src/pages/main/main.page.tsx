@@ -1,16 +1,13 @@
 import { FC } from 'react';
+import { Outlet } from 'react-router-dom';
 
-import { ConnectionContext } from '@/context/hub';
-import { useConnection } from '@/hooks';
-import { MainLayout } from '@/layouts';
+import styles from './main.page.module.scss';
 
 const MainPage: FC = () => {
-    const { connection } = useConnection();
-    
     return (
-        <ConnectionContext.Provider value={connection}>
-            <MainLayout />
-        </ConnectionContext.Provider>
+        <div className={styles.background}>
+            <Outlet />
+        </div>
     );
 };
 

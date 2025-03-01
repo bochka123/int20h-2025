@@ -57,6 +57,78 @@ namespace Int20h2025.DAL.Migrations
                     b.ToTable("Profiles");
                 });
 
+            modelBuilder.Entity("Int20h2025.DAL.Entities.Prompt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Result")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Success")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("Prompts");
+                });
+
+            modelBuilder.Entity("Int20h2025.DAL.Entities.PromptHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCurrent")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PromptId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ValidTo")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
+
+                    b.HasIndex("PromptId");
+
+                    b.ToTable("PromptHistories");
+                });
+
             modelBuilder.Entity("Int20h2025.DAL.Entities.Profile", b =>
                 {
                     b.HasOne("Int20h2025.Auth.Entities.User", "User")
@@ -66,6 +138,46 @@ namespace Int20h2025.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Int20h2025.DAL.Entities.Prompt", b =>
+                {
+                    b.HasOne("Int20h2025.DAL.Entities.Profile", "Profile")
+                        .WithMany("Prompts")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("Int20h2025.DAL.Entities.PromptHistory", b =>
+                {
+                    b.HasOne("Int20h2025.DAL.Entities.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Int20h2025.DAL.Entities.Prompt", "Prompt")
+                        .WithMany("History")
+                        .HasForeignKey("PromptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
+
+                    b.Navigation("Prompt");
+                });
+
+            modelBuilder.Entity("Int20h2025.DAL.Entities.Profile", b =>
+                {
+                    b.Navigation("Prompts");
+                });
+
+            modelBuilder.Entity("Int20h2025.DAL.Entities.Prompt", b =>
+                {
+                    b.Navigation("History");
                 });
 #pragma warning restore 612, 618
         }

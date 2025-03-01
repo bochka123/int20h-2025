@@ -9,10 +9,9 @@
   gap: 12px;
   align-items: start;
 
+  background: c.dark(c.$blue, 3);
+  border-radius: 10px;
   animation: toast-in-bottom 400ms;
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
 
   &.small {
     align-items: center;
@@ -34,8 +33,8 @@
   gap: 4px;
 
   & > .small {
-    @include t.label-medium;
-    color: c.$primary;
+    font-size: 16px;
+    color: c.$light;
   }
 }
 
@@ -46,7 +45,7 @@
   color: c.$primary;
 
   &:hover {
-    color: color.mix(c.$primary, #000, 50%);
+    color: c.light(c.$primary, 2);
     cursor: pointer;
   }
 }
