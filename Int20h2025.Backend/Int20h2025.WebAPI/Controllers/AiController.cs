@@ -10,10 +10,10 @@ namespace Int20h2025.WebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class AiController(IAiService aiService) : ControllerBase
+    public class AiController(IRequestProcessingService processingService) : ControllerBase
     {
         [HttpPost("process")]
         public async Task<ActionResult<ApiResponse>> Register([FromBody] AiRequest model)
-            => Ok(new ApiResponse<AiResponse>(await aiService.ProcessRequestAsync(model)));
+            => Ok(new ApiResponse<AiResponse>(await processingService.ProcessRequestAsync(model)));
     }
 }

@@ -1,5 +1,4 @@
-﻿using Int20h2025.BLL.Factories;
-using Int20h2025.BLL.Helpers;
+﻿using Int20h2025.BLL.Helpers;
 using Int20h2025.BLL.Interfaces;
 using Int20h2025.Common.Exceptions;
 using Int20h2025.Common.Models.DTO.Ai;
@@ -8,55 +7,35 @@ using OpenAI.Chat;
 
 namespace Int20h2025.BLL.Services
 {
-    public class AiService(ChatClient client, AiHelper aiHelper, IPromptService promptService, TaskManagerFactory taskManagerFactory) : IAiService
+    public class AiService(ChatClient client, AiHelper aiHelper) : IAiService
     {
-        public async Task<AiResponse> ProcessRequestAsync(AiRequest request)
+        private readonly List<ChatMessage> ChatMessages = [aiHelper.GeneralPrompt];
+        public async Task<Command> ProccessUserPromptAsync(string prompt, IEnumerable<string> historyMessages)
         {
-            var messages = new List<ChatMessage>()
-            {
-                new SystemChatMessage(aiHelper.GeneralPrompt),
-            };
-            var history = await promptService.GetHistoryAsync();
-            messages.AddRange(history.Select(x => new AssistantChatMessage(x.ToString())));
-            messages.Add(new UserChatMessage(request.Prompt));
-            var stringResp = await ReuqestAiAsync(messages);
-            
-            var command = JsonConvert.DeserializeObject<Command>(stringResp) 
+            ChatMessages.AddRange(historyMessages.Select(x => new AssistantChatMessage(x)));
+            ChatMessages.Add(new UserChatMessage(prompt));
+            var stringResp = await ReuqestAiAsync()
                 ?? throw new InternalPointerBobrException("Unknown ai error occured.");
 
-            if (command.Clarification != null)
-            {
-                await promptService.CreateAsync(new Common.Models.DTO.Prompt.PromptDTO
-                {
-                    Success = false,
-                    Text = request.Prompt,
-                    Result = command.Clarification
-                });
-                return new AiResponse
-                {
-                    Message = command.Clarification
-                };
-            }
+            return JsonConvert.DeserializeObject<Command>(stringResp) ?? throw new InternalPointerBobrException("Unknown ai error occured.");
+        }
 
-            var taskManager = taskManagerFactory.GetTaskManager(Common.Enums.TaskManagersEnum.AzureDevOps);
-            var response = await taskManager.ExecuteMethodAsync(command.Method, command.Parameters);
-            messages.Add(new UserChatMessage(response.ToString()));
-            var userResp = await ReuqestAiAsync(messages);
-            await promptService.CreateAsync(new Common.Models.DTO.Prompt.PromptDTO
-            {
-                Text = request.Prompt,
-                Result = userResp,
-                Success = true
-            });
+        public async Task<AiResponse> ProcessUserResponseAsync(bool ok, string response)
+        {
+            var prompt = aiHelper.GetUserResponsePrompt(ok, response);
+            ChatMessages.Add(new UserChatMessage(prompt));
+            var userResp = await ReuqestAiAsync();
+
+            var command =  JsonConvert.DeserializeObject<Command>(userResp) ?? throw new InternalPointerBobrException("Unknown ai error occured.");
             return new AiResponse
             {
-                Message = userResp
+                Message = command.Clarification
             };
         }
 
-        private async Task<string> ReuqestAiAsync(List<ChatMessage> messages)
+        private async Task<string> ReuqestAiAsync()
         {
-            var chatResponse = await client.CompleteChatAsync(messages);
+            var chatResponse = await client.CompleteChatAsync(ChatMessages);
             var stringResp = chatResponse.Value.Content.First().Text;
             if (string.IsNullOrEmpty(stringResp))
             {

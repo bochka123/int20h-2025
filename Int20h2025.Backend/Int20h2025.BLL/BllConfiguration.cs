@@ -18,6 +18,7 @@ namespace Int20h2025.BLL
         {
             services.AddScoped<TaskManagerFactory>();
             services.AddScoped<AiHelper>();
+            services.AddScoped<IRequestProcessingService, RequestProcessingService>();
             services.ConfigureAiClient();
             services.AddScoped<IAiService, AiService>();
             services.AddScoped<IProfileService, ProfileService>();

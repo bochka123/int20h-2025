@@ -1,5 +1,7 @@
 @use "@/styles/variables/color-variables.scss" as c;
 
-.background {
+.loaderWrapper {
   background: c.light(c.$primary, 2);
+  height: 100vh;
+  overflow: hidden;
 }

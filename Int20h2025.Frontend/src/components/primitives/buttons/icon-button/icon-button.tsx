@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ButtonHTMLAttributes, FC, FormEvent, MouseEvent, useState } from 'react';
 
@@ -17,6 +18,8 @@ type IconButtonProps = {
         e: MouseEvent<HTMLButtonElement> | FormEvent<HTMLFormElement>
     ) => void,
     disabled?: boolean,
+    classes?: string,
+    isLoading?: boolean,
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 const IconButton: FC<IconButtonProps> = ({
@@ -28,6 +31,8 @@ const IconButton: FC<IconButtonProps> = ({
     transparent = false,
     onClick,
     disabled,
+    classes,
+    isLoading,
     ...props
 }) => {
 
@@ -56,6 +61,7 @@ const IconButton: FC<IconButtonProps> = ({
                 ${isFocused ? styles['focused'] : ''}
                 ${transparent ? styles['transparent'] : ''}
                 ${disabled ? styles.disabled : ''}
+                ${classes}
             `}
             onClick={(e) => handleClick(e)}
             onMouseDown={handleFocus}
@@ -67,7 +73,7 @@ const IconButton: FC<IconButtonProps> = ({
             onMouseMove={handleHover}
             {...props}
         >
-            <FontAwesomeIcon icon={icon} />
+            <FontAwesomeIcon icon={isLoading ? faSpinner : icon} className={isLoading ? styles.loader : ''} />
         </button>
     );
 };
