@@ -9,6 +9,7 @@ namespace Int20h2025.BLL
     {
         public static IServiceCollection ConfigureBllServiceCollection(this IServiceCollection services)
         {
+            services.AddScoped<IAiService, AiService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddAutoMapper(typeof(MapperProfile));
             return services;

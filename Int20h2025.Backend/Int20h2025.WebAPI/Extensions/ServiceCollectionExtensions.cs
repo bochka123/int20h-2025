@@ -1,6 +1,5 @@
 ﻿using Azure.Storage.Blobs;
 using Int20h2025.BLL;
-using Int20h2025.BLL.Models.Settings;
 using Int20h2025.Dal.Helpers;
 using Int20h2025.DAL.Context;
 using Int20h2025.DAL.Helpers;
@@ -9,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Int20h2025.Auth;
 using Int20h2025.Common.Helpers;
+using Int20h2025.BLL.Settings;
 
 namespace Int20h2025.WebAPI.Extensions
 {
