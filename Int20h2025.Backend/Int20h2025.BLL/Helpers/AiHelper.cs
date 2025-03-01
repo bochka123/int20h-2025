@@ -1,4 +1,5 @@
-﻿using Int20h2025.BLL.Factories;
+﻿using Azure;
+using Int20h2025.BLL.Factories;
 using Int20h2025.Common.Enums;
 
 namespace Int20h2025.BLL.Helpers
@@ -88,5 +89,15 @@ namespace Int20h2025.BLL.Helpers
             - You are working with a backend system that will parse your response and execute the appropriate method.
             - Always return a valid JSON object, even if the request is unclear.
             - Use the mocked methods and parameters as a reference for determining the correct action.";
+
+        public string GetUserResponsePrompt(bool ok, string response)
+        {
+            return $"Your task is to generate a concise and helpful response in clarification field for the user based on the following data:\n\n" +
+                   $"Success: {ok}\n" +
+                   $"Response: {response}\n\n" +
+                   "Instructions:\n" +
+                   "1. If 'Success' is true, analyze the 'Response' and provide a useful summary or answer for the user.\n" +
+                   "2. If 'Success' is false, explain the issue in a user-friendly way and suggest possible solutions.\n";
+        }
     }
 }
