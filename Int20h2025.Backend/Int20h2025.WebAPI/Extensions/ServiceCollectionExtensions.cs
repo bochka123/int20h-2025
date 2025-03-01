@@ -1,6 +1,8 @@
 ﻿using Azure.Storage.Blobs;
 using Int20h2025.Auth;
 using Int20h2025.BLL;
+using Int20h2025.BLL.Interfaces;
+using Int20h2025.BLL.Services;
 using Int20h2025.BLL.Settings;
 using Int20h2025.Common.Helpers;
 using Int20h2025.Dal.Helpers;

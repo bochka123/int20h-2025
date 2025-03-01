@@ -7,13 +7,13 @@ using OpenAI.Chat;
 
 namespace Int20h2025.BLL.Services
 {
-    public class AiService(ChatClient client) : IAiService
+    public class AiService(ChatClient client, AiHelper aiHelper) : IAiService
     {
         public async Task<AiResponse> ProcessRequestAsync(AiRequest request)
         {
             var messages = new List<ChatMessage>()
             {
-                new SystemChatMessage(AiHelper.GeneralPrompt),
+                new SystemChatMessage(aiHelper.GeneralPrompt),
                 new UserChatMessage(request.Prompt)
             };
             var chatResponse = await client.CompleteChatAsync(messages);
