@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { ChangeEvent, FC, HTMLProps } from 'react';
+import { ChangeEvent, FC, HTMLProps, useRef } from 'react';
 
 import styles from './multiline-input.module.scss';
 
@@ -30,8 +30,19 @@ const MultilineInput: FC<MultilineInputProps> = ({
     ...props
 }) => {
 
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    const autoResize = (): void => {
+        if (!textareaRef.current) return;
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = textareaRef.current.scrollHeight < 300
+            ? `${textareaRef.current.scrollHeight}px`
+            : '300px';
+    };
+
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>): void => {
         onChange && onChange(e.target.value);
+        autoResize();
     };
 
     return (
@@ -39,6 +50,7 @@ const MultilineInput: FC<MultilineInputProps> = ({
             { labelText && <span className={styles.label}>{labelText}</span>}
                 <div className={styles.inputContainer}>
                     <textarea
+                        ref={textareaRef}
                         value={value}
                         onChange={handleChange}
                         className={styles.input}
