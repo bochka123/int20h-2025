@@ -4,7 +4,7 @@ type HistorySectionProps = {}
 const HistorySection: FC<HistorySectionProps> = () => {
     return (
         <div>
-
+            History
         </div>
     );
 };

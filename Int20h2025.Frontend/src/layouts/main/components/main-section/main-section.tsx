@@ -3,15 +3,19 @@ import { FC, useState } from 'react';
 
 import { IconButton, MultilineInput } from '@/components';
 
+import styles from './main-section.module.scss';
+
 type MainSectionProps = {}
 const MainSection: FC<MainSectionProps> = () => {
 
     const [message, setMessage] = useState<string>('');
 
     return (
-        <div>
-            <MultilineInput value={message} onChange={setMessage} />
-            <IconButton icon={faPaperPlane}/>
+        <div className={styles.mainSectionWrapper}>
+            <div className={styles.inputWrapper}>
+                <MultilineInput value={message} onChange={setMessage} />
+                <IconButton icon={faPaperPlane}/>
+            </div>
         </div>
     );
 };
