@@ -1,5 +1,6 @@
 ﻿using Int20h2025.BLL.Interfaces;
 using Int20h2025.Common.Models.Ai;
+using Newtonsoft.Json.Linq;
 
 namespace Int20h2025.BLL.Services
 {
@@ -7,13 +8,13 @@ namespace Int20h2025.BLL.Services
     {
         public string SystemName { get; init; } = "AzureDevOps";
 
-        public async Task<OperationResult> ExecuteMethodAsync(string methodName, object[] parameters)
+        public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
             switch (methodName)
             {
                 case "CreateTask":
-                    var title = parameters[0].ToString();
-                    var assignedTo = parameters[1].ToString();
+                    var title = parameters["title"].ToString();
+                    var assignedTo = parameters["assignedTo"].ToString();
                     return await CreateTaskAsync(title, assignedTo);
 
                 case "UpdateTask":

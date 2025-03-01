@@ -74,10 +74,10 @@ namespace Int20h2025.WebAPI.Extensions
             services.AddScoped<IMigrationHelper, MigrationHelper>();
             services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();
             services.AddDbContext<Int20h2025Context>(options => options.UseSqlServer(configuration.GetConnectionString("Int20h2025")));
-            services.ConfigureBllServiceCollection();
-
             services.AddAuth();
             services.AddAuthDbContext<Int20h2025Context>();
+
+            services.ConfigureBllServiceCollection();
 
             return services;
         }
