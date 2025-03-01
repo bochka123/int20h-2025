@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Int20h2025.DAL\Int20h2025.DAL.csproj" />
   </ItemGroup>
   
@@ -17,10 +23,6 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.5.0" />
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.Extensions.AI" Version="9.3.0-preview.1.25114.11" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
