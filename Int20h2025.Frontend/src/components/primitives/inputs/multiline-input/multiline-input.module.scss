@@ -1,16 +1,19 @@
 @use "@/styles/variables/color-variables.scss" as c;
 @use "@/styles/variables/font-variables.scss" as t;
 @use "@/styles/variables/background-variables.scss" as b;
+@use "@/styles/mixins/scrollbar-mixin.scss" as scrollbar;
 @use "sass:color";
 
 .input {
   width: 100%;
   padding: 8px;
   border-radius: 10px;
-  border: c.$primary solid 5px;
+  //border: c.$primary solid 5px;
+  border: none;
   color: c.$light;
   resize: none;
 
+  @include scrollbar.scrollbar-style;
   @include b.dark-overlay-background;
 }
 
