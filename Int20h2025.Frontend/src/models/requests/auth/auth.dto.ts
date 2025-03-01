@@ -7,4 +7,8 @@ interface IGoogleAuthRequestDto {
     accessToken: string;
 }
 
-export { type IAuthRequestDto, type IGoogleAuthRequestDto };
+interface IMicrosoftAuthRequestDto {
+    accessToken: string;
+}
+
+export { type IAuthRequestDto, type IGoogleAuthRequestDto, type IMicrosoftAuthRequestDto };

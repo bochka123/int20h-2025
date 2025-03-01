@@ -1,5 +1,5 @@
 import { HttpType } from '@/common';
-import { IAuthRequestDto, IGoogleAuthRequestDto } from '@/models/requests';
+import { IAuthRequestDto, IGoogleAuthRequestDto, IMicrosoftAuthRequestDto } from '@/models/requests';
 import { IApiResponseDto } from '@/models/responses';
 import { apiSlice } from '@/services';
 
@@ -33,7 +33,14 @@ export const authApiSlice = apiSlice.injectEndpoints({
                 body: data
             }),
         }),
+        microsoft: builder.mutation<IApiResponseDto<{ id: string }>, IMicrosoftAuthRequestDto>({
+            query: (data) => ({
+                url: '/api/auth/microsoft',
+                method: HttpType.POST,
+                body: data
+            }),
+        }),
     })
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogOutMutation, useGoogleMutation } = authApiSlice;
+export const { useLoginMutation, useRegisterMutation, useLogOutMutation, useGoogleMutation, useMicrosoftMutation } = authApiSlice;

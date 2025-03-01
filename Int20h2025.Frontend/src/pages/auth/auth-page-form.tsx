@@ -12,7 +12,7 @@ import {  useLoginMutation, useRegisterMutation } from '@/services';
 import { setProfile } from '@/store/auth';
 
 import styles from './auth-page.module.scss';
-import { GoogleAuthButton } from './components';
+import { GoogleAuthButton, MicrosoftAuthButton } from './components';
 
 type FormNames = {
     email: string;
@@ -88,6 +88,7 @@ const AuthPageForm: FC<AuthPageFormProps> = ({ authType }) => {
                 {authType === 'signIn' ? 'Login' : 'Register'}
             </BaseButton>
             <GoogleAuthButton />
+            <MicrosoftAuthButton />
         </form>
     );
 };
