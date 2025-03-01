@@ -1,11 +1,18 @@
 ﻿using Int20h2025.BLL.Interfaces;
 using Int20h2025.Common.Models.Ai;
+using Microsoft.Identity.Web;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using Microsoft.VisualStudio.Services.OAuth;
+using Microsoft.VisualStudio.Services.WebApi;
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
 namespace Int20h2025.BLL.Services
 {
-    public class AzureDevOpsService : ITaskManager
+    public class AzureDevOpsService(ITokenAcquisition tokenAcquisition) : ITaskManager
     {
         public string SystemName { get; init; } = "AzureDevOps";
+
+        private readonly string _devOpsOrgUrl = "";
 
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, object[] parameters)
         {
@@ -13,8 +20,9 @@ namespace Int20h2025.BLL.Services
             {
                 case "CreateTask":
                     var title = parameters[0].ToString();
-                    var assignedTo = parameters[1].ToString();
-                    return await CreateTaskAsync(title, assignedTo);
+                    var projectName = parameters[1].ToString();
+                    var assignedTo = parameters[2].ToString();
+                    return await CreateTaskAsync(title, projectName, assignedTo);
 
                 case "UpdateTask":
                     var parseUpdateTaskIdsuccess = int.TryParse(parameters[0].ToString(), out var updateTaskId);
@@ -64,6 +72,12 @@ namespace Int20h2025.BLL.Services
                             },
                             new ParameterInfo
                             {
+                                Name = "projectName",
+                                Type = "string",
+                                Description = "Name of project to create task name."
+                            },
+                            new ParameterInfo
+                            {
                                 Name = "assignedTo",
                                 Type = "string",
                                 Description = "Email of user to be assigned."
@@ -108,8 +122,41 @@ namespace Int20h2025.BLL.Services
             };
         }
 
-        private async Task<OperationResult> CreateTaskAsync(string title, string assignedTo)
+        private async Task<OperationResult> CreateTaskAsync(string title, string projectName, string assignedTo)
         {
+            var scopes = new[] { "/.default" };
+            var accessToken = await tokenAcquisition.GetAccessTokenForUserAsync(scopes);
+
+            var credentials = new VssOAuthAccessTokenCredential(accessToken);
+            using (var connection = new VssConnection(new Uri(_devOpsOrgUrl), credentials))
+            {
+                var workItemClient = connection.GetClient<WorkItemTrackingHttpClient>();
+
+                var patchDocument = new JsonPatchDocument
+                {
+                    new JsonPatchOperation
+                    {
+                        Operation = Microsoft.VisualStudio.Services.WebApi.Patch.Operation.Add,
+                        Path = "/fields/System.Title",
+                        Value = title
+                    },
+                    new JsonPatchOperation
+                    {
+                        Operation = Microsoft.VisualStudio.Services.WebApi.Patch.Operation.Add,
+                        Path = "/fields/System.Description",
+                        Value = "Created via Azure DevOps API with OAuth"
+                    },
+                    new JsonPatchOperation
+                    {
+                        Operation = Microsoft.VisualStudio.Services.WebApi.Patch.Operation.Add,
+                        Path = "/fields/System.AssignedTo",
+                        Value = assignedTo
+                    }
+                };
+
+                var workItem = await workItemClient.CreateWorkItemAsync(patchDocument, projectName, "Task");
+            }
+
             return new OperationResult { Response = $"Задачу '{title}' створено та призначено {assignedTo}.", Success = true };
         }
 

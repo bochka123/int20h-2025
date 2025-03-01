@@ -16,8 +16,8 @@ namespace Int20h2025.BLL
     {
         public static IServiceCollection ConfigureBllServiceCollection(this IServiceCollection services)
         {
-            services.AddSingleton<TaskManagerFactory>();
-            services.AddSingleton<AiHelper>();
+            services.AddScoped<TaskManagerFactory>();
+            services.AddScoped<AiHelper>();
             services.ConfigureAiClient();
             services.AddScoped<IAiService, AiService>();
             services.AddScoped<IProfileService, ProfileService>();
