@@ -1,5 +1,5 @@
 import { faArrowRightFromBracket, faArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { FC, useState } from 'react';
+import { FC, KeyboardEventHandler, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IconButton, MultilineInput } from '@/components';
@@ -19,16 +19,24 @@ const MainSection: FC<MainSectionProps> = () => {
     const [message, setMessage] = useState<string>('');
 
     const handleSubmit = (): void => {
-        setButtonDisabled(true);
-        process({ prompt: message })
-            .then((res) => {
-                setButtonDisabled(false);
-                console.log(res);
-            })
-            .catch((err) => {
-                setButtonDisabled(false);
-                console.error(err);
-            });
+        if (message) {
+            setButtonDisabled(true);
+            process({ prompt: message })
+                .then((res) => {
+                    setButtonDisabled(false);
+                    console.log(res);
+                })
+                .catch((err) => {
+                    setButtonDisabled(false);
+                    console.error(err);
+                });
+        }
+    };
+
+    const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event): void => {
+        if (event.ctrlKey && event.key === 'Enter') {
+            handleSubmit();
+        }
     };
 
     const handleLogOut = (): void => {
@@ -50,6 +58,7 @@ const MainSection: FC<MainSectionProps> = () => {
                         onChange={setMessage}
                         rows={2}
                         classes={styles.textarea}
+                        onKeyDown={handleKeyDown}
                     />
                     <div className={styles.sendButtonWrapper}>
                         <IconButton
