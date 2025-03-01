@@ -1,19 +1,15 @@
 import { FC } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
-// import { Loader } from '@/components';
-// import { useGetMyProfileQuery } from '@/services';
+import { useProfileHook } from '@/hooks';
 
 const ProtectedRoute: FC = () => {
-    // const { data: profileData, isLoading: isProfileLoading } = useGetMyProfileQuery();
+    const { id } = useProfileHook();
 
     return (
-        // isProfileLoading
-        //     ? <Loader />
-            // : profileData?.data.id
-            //     ?
-            <Outlet />
-            // : <Navigate to={'/auth'} />
+            id
+                ? <Outlet />
+                : <Navigate to={'/auth'} />
     );
 };
 
