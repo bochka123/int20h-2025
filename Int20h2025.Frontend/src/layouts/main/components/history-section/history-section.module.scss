@@ -1,0 +1,12 @@
+@use "@/styles/variables/color-variables.scss" as c;
+
+.historySectionWrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+
+  background: c.light(c.$blue, 2);
+  border-radius: 10px;
+
+  padding: 10px;
+}

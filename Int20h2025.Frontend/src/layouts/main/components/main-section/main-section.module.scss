@@ -1,8 +1,18 @@
+@use "@/styles/variables/color-variables.scss" as c;
+
 .mainSectionWrapper {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
+
+  background: c.light(c.$blue, 3);
+  border-radius: 10px;
+  padding: 10px;
+
+  & > h1 {
+    color: c.$primary
+  }
 }
 
 .inputWrapper {

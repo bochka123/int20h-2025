@@ -1,6 +1,5 @@
 @use "@/styles/variables/color-variables.scss" as c;
 @use "@/styles/variables/font-variables.scss" as t;
-@use "@/styles/variables/background-variables.scss" as b;
 @use "@/styles/mixins/scrollbar-mixin.scss" as scrollbar;
 @use "sass:color";
 
@@ -10,15 +9,15 @@
   border-radius: 10px;
   //border: c.$primary solid 5px;
   border: none;
-  color: c.$light;
+  color: c.$dark-blue;
   resize: none;
+  background: c.light(c.$blue, 1);
 
   @include scrollbar.scrollbar-style;
-  @include b.dark-overlay-background;
 }
 
 .input::placeholder {
-  color: rgba(c.$light, 70%);
+  color: rgba(c.$dark-blue, 60%);
 }
 
 .input[type="number"]::-webkit-inner-spin-button,
