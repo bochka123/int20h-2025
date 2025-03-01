@@ -1,0 +1,7 @@
+@use "@/styles/variables/color-variables.scss" as c;
+
+.messageWrapper {
+  background: c.dark(c.$blue, 5);
+  border-radius: 10px;
+  padding: 10px;
+}

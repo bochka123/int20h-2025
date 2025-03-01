@@ -2,6 +2,9 @@
 
 .recentSectionWrapper {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+
   height: 100%;
   width: 100%;
 
@@ -11,4 +14,15 @@
   border-radius: 10px;
 
   padding: 10px;
+
+  & > p {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.messagesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

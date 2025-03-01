@@ -6,9 +6,12 @@ import { IconButton, MultilineInput } from '@/components';
 import { useLogOutMutation, useProcessMutation } from '@/services';
 
 import styles from './main-section.module.scss';
+import { useMainLayoutContext } from '@/layouts/main/hooks';
 
 type MainSectionProps = {}
 const MainSection: FC<MainSectionProps> = () => {
+
+    const { addMessage } = useMainLayoutContext();
 
     const [process] = useProcessMutation();
     const [logOut] = useLogOutMutation();
@@ -24,7 +27,9 @@ const MainSection: FC<MainSectionProps> = () => {
             process({ prompt: message })
                 .then((res) => {
                     setButtonDisabled(false);
-                    console.log(res);
+                    if (res.data) {
+                        addMessage({ message: res.data.data.clarification });
+                    }
                 })
                 .catch((err) => {
                     setButtonDisabled(false);
