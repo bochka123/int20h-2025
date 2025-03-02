@@ -6,13 +6,13 @@ using TrelloDotNet;
 
 namespace Int20h2025.BLL.Factories
 {
-    public class TaskManagerFactory(TrelloClient trelloClient, IUserContextService userContextService)
+    public class TaskManagerFactory(TrelloClient trelloClient, IUserContextService userContextService, HttpClient httpClient)
     {
         public ITaskManager GetTaskManager(TaskManagersEnum taskManager)
         {
             return taskManager switch
             {
-                TaskManagersEnum.AzureDevOps => new AzureDevOpsService(userContextService),
+                TaskManagersEnum.AzureDevOps => new AzureDevOpsService(userContextService, httpClient),
                 TaskManagersEnum.Trello => new TrelloService(trelloClient),
                 _ => throw new NotImplementedException("Task manager is not implemented by factory!")
             };

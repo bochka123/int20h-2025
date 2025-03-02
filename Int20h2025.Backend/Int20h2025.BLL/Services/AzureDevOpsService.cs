@@ -1,111 +1,320 @@
 ﻿using Int20h2025.Auth.Interfaces;
 using Int20h2025.BLL.Interfaces;
-using Int20h2025.Common.Exceptions;
 using Int20h2025.Common.Models.Ai;
 using Int20h2025.Common.Models.AzureDevops;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
-using Microsoft.VisualStudio.Services.OAuth;
-using Microsoft.VisualStudio.Services.WebApi;
-using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace Int20h2025.BLL.Services
 {
-    public class AzureDevOpsService(IUserContextService userContextService) : ITaskManager
+    public class AzureDevOpsService(IUserContextService userContextService, HttpClient httpClient) : ITaskManager
     {
         public string SystemName { get; init; } = "AzureDevOps";
-        private readonly string _devOpsOrgUrl = "https://dev.azure.com/";
+        private readonly string _devOpsUrl = "https://dev.azure.com/";
+
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
             switch (methodName)
             {
                 case "CreateTask":
-                    var model = parameters.ToObject<CreateTaskModel>()!;
-                    return await CreateTaskAsync(model);
+                    var createTaskModel = parameters.ToObject<CreateTaskModel>();
+                    if (createTaskModel == null)
+                        return new OperationResult { Success = false, Response = "Invalid parameters for CreateTask method." };
+                    return await CreateTaskAsync(createTaskModel);
 
                 case "UpdateTask":
-                    var parseUpdateTaskIdsuccess = int.TryParse(parameters[0].ToString(), out var updateTaskId);
-
-                    if (!parseUpdateTaskIdsuccess)
-                    {
-                        throw new InvalidCastException("Couldn` convert updateTaskId from AI");
-                    }
-
-                    var status = parameters[1].ToString();
-                    return await UpdateTaskAsync(updateTaskId, status);
+                    var updateTaskModel = parameters.ToObject<UpdateTaskModel>();
+                    if (updateTaskModel == null)
+                        return new OperationResult { Success = false, Response = "Invalid parameters for UpdateTask method." };
+                    return await UpdateTaskAsync(updateTaskModel);
 
                 case "DeleteTask":
-                    var parseDeleteTaskIdsuccess = int.TryParse(parameters[0].ToString(), out var deleteTaskId);
+                    var deleteTaskModel = parameters.ToObject<DeleteTaskModel>();
+                    if (deleteTaskModel == null)
+                        return new OperationResult { Success = false, Response = "Invalid parameters for DeleteTask method." };
+                    return await DeleteTaskAsync(deleteTaskModel);
 
-                    if (!parseDeleteTaskIdsuccess)
-                    {
-                        throw new InvalidCastException("Couldn` convert deleteTaskId from AI");
-                    }
+                case "GetOrganizations":
+                    return await GetOrganizationsAsync();
 
-                    var filePath = parameters[1].ToString();
-                    return await DeleteTaskAsync(deleteTaskId);
+                case "GetProjects":
+                    var organizationName = parameters["organizationName"]?.ToString();
+                    if (string.IsNullOrEmpty(organizationName))
+                        return new OperationResult { Success = false, Response = "Organization name is required for GetProjects method." };
+                    return await GetProjectsAsync(organizationName);
 
                 default:
-                    throw new NotImplementedException($"Method '{methodName}' is not implemented.");
+                    return new OperationResult { Success = false, Response = $"Method '{methodName}' is not implemented." };
+            }
+        }
+
+        public async Task<OperationResult> GetOrganizationsAsync()
+        {
+            var accessToken = userContextService.UserData;
+            if (string.IsNullOrEmpty(accessToken))
+                return new OperationResult { Success = false, Response = "User must sign in to Azure DevOps first." };
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            try
+            {
+                var response = await httpClient.GetAsync("https://app.vssps.visualstudio.com/_apis/accounts");
+                if (!response.IsSuccessStatusCode)
+                    return new OperationResult { Success = false, Response = $"Failed to fetch organizations. Status code: {response.StatusCode}" };
+
+                var content = await response.Content.ReadAsStringAsync();
+                var organizations = JArray.Parse(content);
+
+                var organizationNames = organizations
+                    .Select(o => o["AccountName"]?.ToString())
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .ToList();
+
+                return new OperationResult
+                {
+                    Response = string.Join(", ", organizationNames),
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult
+                {
+                    Response = $"An error occurred while fetching organizations: {ex.Message}",
+                    Success = false
+                };
+            }
+        }
+
+        public async Task<OperationResult> GetProjectsAsync(string organizationName)
+        {
+            var accessToken = userContextService.UserData;
+            if (string.IsNullOrEmpty(accessToken))
+                return new OperationResult { Success = false, Response = "User must sign in to Azure DevOps first." };
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            try
+            {
+                var response = await httpClient.GetAsync($"{_devOpsUrl}{organizationName}/_apis/projects?api-version=7.1");
+                if (!response.IsSuccessStatusCode)
+                    return new OperationResult { Success = false, Response = $"Failed to fetch projects. Status code: {response.StatusCode}" };
+
+                var content = await response.Content.ReadAsStringAsync();
+                var projects = JObject.Parse(content);
+
+                var projectNames = projects["value"]
+                    .Select(p => p["name"]?.ToString())
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .ToList();
+
+                return new OperationResult
+                {
+                    Response = string.Join(", ", projectNames),
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult
+                {
+                    Response = $"An error occurred while fetching projects: {ex.Message}",
+                    Success = false
+                };
             }
         }
 
         private async Task<OperationResult> CreateTaskAsync(CreateTaskModel model)
         {
-            var accessToken = userContextService.UserData ?? throw new InternalPointerBobrException("User must sign in devops firstly.");
-            var credentials = new VssOAuthAccessTokenCredential(accessToken);
-            using var connection = new VssConnection(new Uri(_devOpsOrgUrl + model.OrganizationName), credentials);
-            var workItemClient = connection.GetClient<WorkItemTrackingHttpClient>();
+            var accessToken = userContextService.UserData;
+            if (string.IsNullOrEmpty(accessToken))
+                return new OperationResult { Success = false, Response = "User must sign in to Azure DevOps first." };
 
-            var patchDocument = new JsonPatchDocument
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var patchDocument = new[]
             {
-                new JsonPatchOperation
+                new
                 {
-                    Operation = Microsoft.VisualStudio.Services.WebApi.Patch.Operation.Add,
-                    Path = "/fields/System.Title",
-                    Value = model.Title
+                    op = "add",
+                    path = "/fields/System.Title",
+                    value = model.Title
                 },
-                new JsonPatchOperation
+                new
                 {
-                    Operation = Microsoft.VisualStudio.Services.WebApi.Patch.Operation.Add,
-                    Path = "/fields/System.AssignedTo",
-                    Value = model.AssignedTo
+                    op = "add",
+                    path = "/fields/System.AssignedTo",
+                    value = model.AssignedTo
                 }
             };
 
             if (!string.IsNullOrEmpty(model.Description))
             {
-                patchDocument.Add(new JsonPatchOperation
+                patchDocument = patchDocument.Append(new
                 {
-                    Operation = Microsoft.VisualStudio.Services.WebApi.Patch.Operation.Add,
-                    Path = "/fields/System.Description",
-                    Value = model.Description
+                    op = "add",
+                    path = "/fields/System.Description",
+                    value = model.Description
+                }).ToArray();
+            }
+
+            if (!string.IsNullOrEmpty(model.Priority))
+            {
+                patchDocument = patchDocument.Append(new
+                {
+                    op = "add",
+                    path = "/fields/Microsoft.VSTS.Common.Priority",
+                    value = model.Priority
+                }).ToArray();
+            }
+
+            var jsonContent = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(patchDocument), Encoding.UTF8, "application/json-patch+json");
+
+            try
+            {
+                var response = await httpClient.PostAsync($"{_devOpsUrl}{model.OrganizationName}/{model.ProjectName}/_apis/wit/workitems/$Task?api-version=6.0", jsonContent);
+                if (!response.IsSuccessStatusCode)
+                    return new OperationResult { Success = false, Response = $"Failed to create task. Status code: {response.StatusCode}" };
+
+                var content = await response.Content.ReadAsStringAsync();
+                var workItem = JObject.Parse(content);
+
+                var resp = new TaskResponseModel
+                {
+                    Id = workItem["id"]!.ToObject<int>(),
+                    Title = model.Title,
+                    Url = workItem["_links"]["html"]["href"].ToString()
+                };
+
+                return new OperationResult { Response = resp.ToString(), Success = true };
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult
+                {
+                    Response = $"An error occurred while creating the task: {ex.Message}",
+                    Success = false
+                };
+            }
+        }
+
+        private async Task<OperationResult> UpdateTaskAsync(UpdateTaskModel model)
+        {
+            var accessToken = userContextService.UserData;
+            if (string.IsNullOrEmpty(accessToken))
+                return new OperationResult { Success = false, Response = "User must sign in to Azure DevOps first." };
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var patchDocument = new List<object>();
+
+            if (!string.IsNullOrEmpty(model.Status))
+            {
+                patchDocument.Add(new
+                {
+                    op = "add",
+                    path = "/fields/System.State",
+                    value = model.Status
+                });
+            }
+
+            if (!string.IsNullOrEmpty(model.Description))
+            {
+                patchDocument.Add(new
+                {
+                    op = "add",
+                    path = "/fields/System.Description",
+                    value = model.Description
                 });
             }
 
             if (!string.IsNullOrEmpty(model.Priority))
             {
-                patchDocument.Add(new JsonPatchOperation
+                patchDocument.Add(new
                 {
-                    Operation = Microsoft.VisualStudio.Services.WebApi.Patch.Operation.Add,
-                    Path = "/fields/Microsoft.VSTS.Common.Priority",
-                    Value = model.Priority
+                    op = "add",
+                    path = "/fields/Microsoft.VSTS.Common.Priority",
+                    value = model.Priority
                 });
             }
 
-            var workItem = await workItemClient.CreateWorkItemAsync(patchDocument, model.ProjectName, "Task");
+            if (!string.IsNullOrEmpty(model.AssignedTo))
+            {
+                patchDocument.Add(new
+                {
+                    op = "add",
+                    path = "/fields/System.AssignedTo",
+                    value = model.AssignedTo
+                });
+            }
 
-            return new OperationResult { Response = $"WorkItem: {workItem.Url}, {model.Title}, {model.AssignedTo}", Success = true };
+            var jsonContent = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(patchDocument), Encoding.UTF8, "application/json-patch+json");
+
+            try
+            {
+                var response = await httpClient.PatchAsync($"{_devOpsUrl}{model.OrganizationName}/{model.ProjectName}/_apis/wit/workitems/{model.Id}?api-version=6.0", jsonContent);
+                if (!response.IsSuccessStatusCode)
+                    return new OperationResult { Success = false, Response = $"Failed to update task. Status code: {response.StatusCode}" };
+
+                var content = await response.Content.ReadAsStringAsync();
+                var workItem = JObject.Parse(content);
+
+                var resp = new TaskResponseModel
+                {
+                    Id = workItem["id"].ToObject<int>(),
+                    Url = workItem["_links"]["html"]["href"].ToString()
+                };
+
+                return new OperationResult
+                {
+                    Response = resp.ToString(),
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult
+                {
+                    Response = $"An error occurred while updating the task: {ex.Message}",
+                    Success = false
+                };
+            }
         }
 
-        private async Task<OperationResult> UpdateTaskAsync(int taskId, string status)
+        private async Task<OperationResult> DeleteTaskAsync(DeleteTaskModel model)
         {
-            return new OperationResult { Response = $"Задачу з номером '{taskId}' оновлено та призначено статус {status}.", Success = true };
-        }
+            var accessToken = userContextService.UserData;
+            if (string.IsNullOrEmpty(accessToken))
+                return new OperationResult { Success = false, Response = "User must sign in to Azure DevOps first." };
 
-        private async Task<OperationResult> DeleteTaskAsync(int taskId)
-        {
-            return new OperationResult { Response = $"Задачу з номером '{taskId}' видалено.", Success = true };
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            try
+            {
+                var response = await httpClient.DeleteAsync($"{_devOpsUrl}{model.OrganizationName}/{model.ProjectName}/_apis/wit/workitems/{model.TaskId}?api-version=6.0");
+                if (!response.IsSuccessStatusCode)
+                    return new OperationResult { Success = false, Response = $"Failed to delete task. Status code: {response.StatusCode}" };
+
+                return new OperationResult
+                {
+                    Response = "Task deleted successfully.",
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult
+                {
+                    Response = $"An error occurred while deleting the task: {ex.Message}",
+                    Success = false
+                };
+            }
         }
 
         public SystemMethodInfo GetAvailableMethods()
@@ -121,70 +330,27 @@ namespace Int20h2025.BLL.Services
                         Description = "Creates a new task in the specified project.",
                         Parameters =
                         [
-                            new ParameterInfo
-                            {
-                                Name = "title",
-                                Type = "string",
-                                Description = "Task name.",
-                                IsRequired = true
-                            },
-                            new ParameterInfo
-                            {
-                                Name = "projectName",
-                                Type = "string",
-                                Description = "Name of project to create task name.",
-                                IsRequired = true
-                            },
-                            new ParameterInfo
-                            {
-                                Name = "organizationName",
-                                Type = "string",
-                                Description = "Name of organization to create task name.",
-                                IsRequired = true
-                            },
-                            new ParameterInfo
-                            {
-                                Name = "assignedTo",
-                                Type = "string",
-                                Description = "Email of user to be assigned.",
-                                IsRequired = true
-                            },
-                            new ParameterInfo
-                            {
-                                Name = "description",
-                                Type = "string",
-                                Description = "Description of the task.",
-                                IsRequired = false
-                            },
-                            new ParameterInfo
-                            {
-                                Name = "priority",
-                                Type = "string",
-                                Description = "Priority of the task.",
-                                IsRequired = false
-                            }
-                        ]                   
+                            new ParameterInfo { Name = "title", Type = "string", Description = "Task name.", IsRequired = true },
+                            new ParameterInfo { Name = "projectName", Type = "string", Description = "Name of project to create task name.", IsRequired = true },
+                            new ParameterInfo { Name = "organizationName", Type = "string", Description = "Name of organization to create task name.", IsRequired = true },
+                            new ParameterInfo { Name = "assignedTo", Type = "string", Description = "Email of user to be assigned.", IsRequired = true },
+                            new ParameterInfo { Name = "description", Type = "string", Description = "Description of the task.", IsRequired = false },
+                            new ParameterInfo { Name = "priority", Type = "string", Description = "Priority of the task.", IsRequired = false }
+                        ]
                     },
                     new ServiceMethodInfo
                     {
                         MethodName = "UpdateTask",
-                        Description = "Update task by id and status that contains new status.",
+                        Description = "Update task by id, status, description, priority, and assignedTo.",
                         Parameters =
                         [
-                            new ParameterInfo
-                            {
-                                Name = "taskId",
-                                Type = "int",
-                                Description = "Id of task to be updated.",
-                                IsRequired = true
-                            },
-                            new ParameterInfo
-                            {
-                                Name = "status",
-                                Type = "string",
-                                Description = "New status that needs to be updated.",
-                                IsRequired = true
-                            }
+                            new ParameterInfo { Name = "id", Type = "int", Description = "Id of task to be updated.", IsRequired = true },
+                            new ParameterInfo { Name = "organizationName", Type = "string", Description = "Name of organization where the task is located.", IsRequired = true },
+                            new ParameterInfo { Name = "projectName", Type = "string", Description = "Name of project where the task is located.", IsRequired = true },
+                            new ParameterInfo { Name = "assignedTo", Type = "string", Description = "Email of user to be assigned.", IsRequired = false },
+                            new ParameterInfo { Name = "status", Type = "string", Description = "New status of the task.", IsRequired = false },
+                            new ParameterInfo { Name = "description", Type = "string", Description = "New description of the task.", IsRequired = false },
+                            new ParameterInfo { Name = "priority", Type = "string", Description = "New priority of the task.", IsRequired = false }
                         ]
                     },
                     new ServiceMethodInfo
@@ -193,13 +359,24 @@ namespace Int20h2025.BLL.Services
                         Description = "Deletes task by id.",
                         Parameters =
                         [
-                            new ParameterInfo
-                            {
-                                Name = "taskId",
-                                Type = "int",
-                                Description = "Id of task to be deleted.",
-                                IsRequired = true
-                            }
+                            new ParameterInfo { Name = "taskId", Type = "int", Description = "Id of task to be deleted.", IsRequired = true },
+                            new ParameterInfo { Name = "organizationName", Type = "string", Description = "Name of organization where the task is located.", IsRequired = true },
+                            new ParameterInfo { Name = "projectName", Type = "string", Description = "Name of project where the task is located.", IsRequired = true }
+                        ]
+                    },
+                    new ServiceMethodInfo
+                    {
+                        MethodName = "GetOrganizations",
+                        Description = "Retrieves a list of Azure DevOps organizations.",
+                        Parameters = []
+                    },
+                    new ServiceMethodInfo
+                    {
+                        MethodName = "GetProjects",
+                        Description = "Retrieves a list of projects in the specified organization.",
+                        Parameters =
+                        [
+                            new ParameterInfo { Name = "organizationName", Type = "string", Description = "Name of the organization.", IsRequired = true }
                         ]
                     }
                 ]

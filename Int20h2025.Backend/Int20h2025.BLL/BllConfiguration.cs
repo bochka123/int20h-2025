@@ -6,7 +6,6 @@ using Int20h2025.BLL.Interfaces;
 using Int20h2025.BLL.Mappers;
 using Int20h2025.BLL.Services;
 using Int20h2025.BLL.Settings;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OpenAI.Chat;
