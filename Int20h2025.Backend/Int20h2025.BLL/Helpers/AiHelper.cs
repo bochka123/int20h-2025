@@ -13,9 +13,9 @@ namespace Int20h2025.BLL.Helpers
                 Available Systems and Methods:
                 Here is a mocked list of systems and their methods with arguments:
 
-                {taskManager.GetTaskManager(TaskManagersEnum.Trello).GetAvailableMethods().ToString()}
+                {taskManager.GetTaskManager(nameof(TaskManagersEnum.Trello)).GetAvailableMethods().ToString()}
 
-                {taskManager.GetTaskManager(TaskManagersEnum.AzureDevOps).GetAvailableMethods().ToString()}
+                {taskManager.GetTaskManager(nameof(TaskManagersEnum.AzureDevOps)).GetAvailableMethods().ToString()}
 
                 Response Structure:
                 Your response must always be a JSON object with the following structure:

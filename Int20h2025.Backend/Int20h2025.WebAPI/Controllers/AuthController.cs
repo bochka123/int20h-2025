@@ -9,7 +9,7 @@ namespace Int20h2025.WebAPI.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthController(IEmailPasswordAuthService authService, IGoogleAuthService googleAuthService, IMicrosoftAuthService microsoftAuthService, IProfileService profileService) : ControllerBase
+    public class AuthController(IEmailPasswordAuthService authService, IGoogleAuthService googleAuthService, IMicrosoftAuthService microsoftAuthService, IProfileService profileService, IIntegrationService integrationService) : ControllerBase
     {
         [HttpPost("register")]
         public async Task<ActionResult<ApiResponse>> Register([FromBody] UserPasswordModel model)
@@ -47,6 +47,7 @@ namespace Int20h2025.WebAPI.Controllers
         {
             await microsoftAuthService.SignInAsync(model);
             var profile = await profileService.EnsureProfileCreatedAsync();
+            await integrationService.IntegrateUserAsync(Common.Enums.TaskManagersEnum.AzureDevOps);
             return Ok(new ApiResponse<ProfileDTO>(profile));
         }
     }
