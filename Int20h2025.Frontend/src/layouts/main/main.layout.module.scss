@@ -12,6 +12,23 @@
     grid-template-columns: 300px auto 300px;
     gap: 10px;
     z-index: 1;
+    max-height: 100vh;
 
     position: relative;
+}
+
+@media (max-width: 768px) {
+    .mainContent {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        grid-template-columns: 90% 90% 90%;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        & > * {
+            scroll-snap-align: center;
+        }
+    }
 }

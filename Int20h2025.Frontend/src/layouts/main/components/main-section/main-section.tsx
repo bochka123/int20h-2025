@@ -1,14 +1,17 @@
 import { faArrowRightFromBracket, faArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { FC, useState } from 'react';
+import { FC, KeyboardEventHandler, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IconButton, MultilineInput } from '@/components';
 import { useLogOutMutation, useProcessMutation } from '@/services';
 
 import styles from './main-section.module.scss';
+import { useMainLayoutContext } from '@/layouts/main/hooks';
 
 type MainSectionProps = {}
 const MainSection: FC<MainSectionProps> = () => {
+
+    const { addMessage } = useMainLayoutContext();
 
     const [process] = useProcessMutation();
     const [logOut] = useLogOutMutation();
@@ -19,16 +22,26 @@ const MainSection: FC<MainSectionProps> = () => {
     const [message, setMessage] = useState<string>('');
 
     const handleSubmit = (): void => {
-        setButtonDisabled(true);
-        process({ prompt: message })
-            .then((res) => {
-                setButtonDisabled(false);
-                console.log(res);
-            })
-            .catch((err) => {
-                setButtonDisabled(false);
-                console.error(err);
-            });
+        if (message) {
+            setButtonDisabled(true);
+            process({ prompt: message })
+                .then((res) => {
+                    setButtonDisabled(false);
+                    if (res.data) {
+                        addMessage({ message: res.data.data.clarification });
+                    }
+                })
+                .catch((err) => {
+                    setButtonDisabled(false);
+                    console.error(err);
+                });
+        }
+    };
+
+    const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event): void => {
+        if (event.ctrlKey && event.key === 'Enter') {
+            handleSubmit();
+        }
     };
 
     const handleLogOut = (): void => {
@@ -50,6 +63,7 @@ const MainSection: FC<MainSectionProps> = () => {
                         onChange={setMessage}
                         rows={2}
                         classes={styles.textarea}
+                        onKeyDown={handleKeyDown}
                     />
                     <div className={styles.sendButtonWrapper}>
                         <IconButton

@@ -29,7 +29,7 @@ namespace Int20h2025.BLL.Services
             var command =  JsonConvert.DeserializeObject<Command>(userResp) ?? throw new InternalPointerBobrException("Unknown ai error occured.");
             return new AiResponse
             {
-                Message = command.Clarification
+                Clarification = command.Clarification
             };
         }
 

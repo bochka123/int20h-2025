@@ -1,0 +1,20 @@
+@use "@/styles/variables/color-variables.scss" as c;
+
+@keyframes lightenBackground {
+  0% {
+    background: c.dark(c.$blue, 1);
+  }
+  100% {
+    background: c.dark(c.$blue, 5);
+  }
+}
+
+.messageWrapper {
+  background: c.dark(c.$blue, 5);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.highlighted {
+  animation: lightenBackground 1s ease;
+}
