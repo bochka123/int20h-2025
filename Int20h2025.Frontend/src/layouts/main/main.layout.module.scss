@@ -9,12 +9,19 @@
 .mainContent {
     padding: 10px;
     display: grid;
-    grid-template-columns: 300px auto 300px;
-    gap: 10px;
+    grid-template-columns: 300px 22px auto 22px 300px;
     z-index: 1;
     max-height: 100vh;
 
     position: relative;
+}
+
+.lineWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    cursor: grab;
 }
 
 @media (max-width: 768px) {
@@ -22,6 +29,7 @@
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         grid-template-columns: 90% 90% 90%;
+        gap: 10px;
 
         &::-webkit-scrollbar {
             display: none;
@@ -30,5 +38,9 @@
         & > * {
             scroll-snap-align: center;
         }
+    }
+
+    .lineWrapper {
+        display: none;
     }
 }
