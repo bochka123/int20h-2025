@@ -22,7 +22,7 @@ namespace Int20h2025.BLL.Services
 
             if (integration == null) return new OperationResult { Response = $"User doesn't integrated with '{nameof(TaskManagersEnum.Trello)}'. Provide ApiKey and Token to integrate.", Success = false };
 
-            trelloClient = (TrelloClient)trelloAuthService.GetClient();
+            trelloClient = new TrelloClient(integration.ApiKey, integration.Token);
             switch (methodName)
             {
                 case "CreateTask":
@@ -35,13 +35,19 @@ namespace Int20h2025.BLL.Services
                     return await CreateTaskAsync(title, description, listId, listName, boardId, boardName);
 
                 case "UpdateTask":
-                    var cardId = parameters["taskId"].ToString();
+                    var cardId = parameters["taskId"]?.ToString();
                     var newTitle = parameters["title"].ToString();
-                    return await UpdateTaskAsync(cardId, newTitle);
+                    var taskName = parameters["taskName"]?.ToString();
+                    var updateBoardId = parameters["boardId"]?.ToString();
+                    var updateBoardName = parameters["boardName"]?.ToString();
+                    return await UpdateTaskAsync(cardId, newTitle, taskName, updateBoardId, updateBoardName);
 
                 case "DeleteTask":
-                    var deleteCardId = parameters["taskId"].ToString();
-                    return await DeleteTaskAsync(deleteCardId);
+                    var deleteCardId = parameters["taskId"]?.ToString();
+                    var deleteTaskName = parameters["taskName"]?.ToString();
+                    var deleteBoardId = parameters["boardId"]?.ToString();
+                    var deleteBoardName = parameters["boardName"]?.ToString();
+                    return await DeleteTaskAsync(deleteCardId, deleteTaskName, deleteBoardId, deleteBoardName);
 
                 case "GetTasks":
                     var getTasksBoardId = parameters["boardId"]?.ToString();
@@ -84,8 +90,11 @@ namespace Int20h2025.BLL.Services
                         Description = "Updates the title of a card.",
                         Parameters =
                         [
-                            new ParameterInfo { Name = "taskId", Type = "string", Description = "Card ID to be updated.", IsRequired = true },
-                            new ParameterInfo { Name = "title", Type = "string", Description = "New title.", IsRequired = true }
+                            new ParameterInfo { Name = "taskId", Type = "string", Description = "Card ID to be updated.", IsRequired = false },
+                            new ParameterInfo { Name = "title", Type = "string", Description = "New title.", IsRequired = true },
+                            new ParameterInfo { Name = "taskName", Type = "string", Description = "Card name to search for if taskId is not provided.", IsRequired = false },
+                            new ParameterInfo { Name = "boardId", Type = "string", Description = "Board ID where the card is located.", IsRequired = false },
+                            new ParameterInfo { Name = "boardName", Type = "string", Description = "Board name to search for if boardId is not provided.", IsRequired = false }
                         ]
                     },
                     new ServiceMethodInfo
@@ -94,7 +103,10 @@ namespace Int20h2025.BLL.Services
                         Description = "Deletes a card.",
                         Parameters =
                         [
-                            new ParameterInfo { Name = "taskId", Type = "string", Description = "Card ID to be deleted.", IsRequired = true }
+                            new ParameterInfo { Name = "taskId", Type = "string", Description = "Card ID to be deleted.", IsRequired = false },
+                            new ParameterInfo { Name = "taskName", Type = "string", Description = "Card name to search for if taskId is not provided.", IsRequired = false },
+                            new ParameterInfo { Name = "boardId", Type = "string", Description = "Board ID where the card is located.", IsRequired = false },
+                            new ParameterInfo { Name = "boardName", Type = "string", Description = "Board name to search for if boardId is not provided.", IsRequired = false }
                         ]
                     },
                     new ServiceMethodInfo
@@ -170,18 +182,64 @@ namespace Int20h2025.BLL.Services
             return new OperationResult { Response = $"Card '{title}' created successfully.", Success = true };
         }
 
-        private async Task<OperationResult> UpdateTaskAsync(string cardId, string newTitle)
+        private async Task<OperationResult> UpdateTaskAsync(string? taskId, string newTitle, string? taskName = null, string? boardId = null, string? boardName = null)
         {
-            var card = await trelloClient.GetCardAsync(cardId);
-            card.Name = newTitle;
-            await trelloClient.UpdateCardAsync(card);
-            return new OperationResult { Response = $"Card '{cardId}' updated successfully.", Success = true };
+            if (string.IsNullOrEmpty(taskId))
+            {
+                if (string.IsNullOrEmpty(taskName))
+                {
+                    return new OperationResult { Response = "Either taskId or taskName must be provided.", Success = false };
+                }
+
+                var resolvedBoardId = await GetBoardIdAsync(boardId, boardName);
+                if (resolvedBoardId == null)
+                {
+                    return new OperationResult { Response = "Board ID or name must be provided.", Success = false };
+                }
+
+                var cards = await trelloClient.GetCardsOnBoardAsync(resolvedBoardId);
+                var card = cards.FirstOrDefault(c => c.Name.Equals(taskName, StringComparison.OrdinalIgnoreCase));
+                if (card == null)
+                {
+                    return new OperationResult { Response = $"Card with name '{taskName}' not found.", Success = false };
+                }
+
+                taskId = card.Id;
+            }
+
+            var cardToUpdate = await trelloClient.GetCardAsync(taskId);
+            cardToUpdate.Name = newTitle;
+            await trelloClient.UpdateCardAsync(cardToUpdate);
+            return new OperationResult { Response = $"Card '{taskId}' updated successfully.", Success = true };
         }
 
-        private async Task<OperationResult> DeleteTaskAsync(string cardId)
+        private async Task<OperationResult> DeleteTaskAsync(string? taskId, string? taskName = null, string? boardId = null, string? boardName = null)
         {
-            await trelloClient.DeleteCardAsync(cardId);
-            return new OperationResult { Response = $"Card '{cardId}' deleted successfully.", Success = true };
+            if (string.IsNullOrEmpty(taskId))
+            {
+                if (string.IsNullOrEmpty(taskName))
+                {
+                    return new OperationResult { Response = "Either taskId or taskName must be provided.", Success = false };
+                }
+
+                var resolvedBoardId = await GetBoardIdAsync(boardId, boardName);
+                if (resolvedBoardId == null)
+                {
+                    return new OperationResult { Response = "Board ID or name must be provided.", Success = false };
+                }
+
+                var cards = await trelloClient.GetCardsOnBoardAsync(resolvedBoardId);
+                var card = cards.FirstOrDefault(c => c.Name.Equals(taskName, StringComparison.OrdinalIgnoreCase));
+                if (card == null)
+                {
+                    return new OperationResult { Response = $"Card with name '{taskName}' not found.", Success = false };
+                }
+
+                taskId = card.Id;
+            }
+
+            await trelloClient.DeleteCardAsync(taskId);
+            return new OperationResult { Response = $"Card '{taskId}' deleted successfully.", Success = true };
         }
 
         private async Task<OperationResult> GetTasksAsync(string? boardId, string? boardName)

@@ -1,11 +1,12 @@
 import { Dispatch, FC, SetStateAction } from 'react';
 import { Controller, SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 
-import { ToastModeEnum } from '@/common';
+import { InputTypes, IntegrationSystemEnum, ToastModeEnum } from '@/common';
 import { BaseButton, BaseInput, Modal } from '@/components';
 import { getFormErrorMessage } from '@/helpers';
 import { useToast } from '@/hooks';
 import styles from '@/pages/auth/auth-page.module.scss';
+import { useIntegrateMutation } from '@/services/integration/integration.service.ts';
 
 type FormNames = {
     apiKey: string;
@@ -22,8 +23,21 @@ const SyncTrelloModal: FC<SyncTrelloModalProps> = ({ visible, setVisible }) => {
 
     const { handleSubmit, control } = useForm<FormNames>();
 
+    const [integrate] = useIntegrateMutation();
+
     const onSubmit: SubmitHandler<FormNames> = (data): void => {
-        console.log(data);
+        integrate({
+            systemName: IntegrationSystemEnum.TRELLO,
+            apiKey: data.apiKey,
+            token: data.token,
+        }).unwrap()
+            .then(() => {
+                addToast(ToastModeEnum.SUCCESS, 'Synchronized successfully');
+                setVisible(false);
+            })
+            .catch((error) => {
+                addToast(ToastModeEnum.ERROR, `Login failed: ${error.message}`);
+            });
     };
 
     const onError: SubmitErrorHandler<FormNames> = (error): void => {
@@ -38,7 +52,7 @@ const SyncTrelloModal: FC<SyncTrelloModalProps> = ({ visible, setVisible }) => {
                     name="apiKey"
                     rules={{ required: 'Api key field is required' }}
                     render={({ field: { onChange, value } }) => (
-                        <BaseInput value={value} onChange={onChange} placeholder={'Api key'} />
+                        <BaseInput value={value} onChange={onChange} placeholder={'Api key'} type={InputTypes.PASSWORD} />
                     )}
                 />
                 <Controller
@@ -46,7 +60,7 @@ const SyncTrelloModal: FC<SyncTrelloModalProps> = ({ visible, setVisible }) => {
                     name="token"
                     rules={{ required: 'Token field is required' }}
                     render={({ field: { onChange, value } }) => (
-                        <BaseInput value={value} onChange={onChange} placeholder={'Token'} />
+                        <BaseInput value={value} onChange={onChange} placeholder={'Token'} type={InputTypes.PASSWORD} />
                     )}
                 />
 
