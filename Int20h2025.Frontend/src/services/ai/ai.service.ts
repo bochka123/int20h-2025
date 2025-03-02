@@ -1,6 +1,6 @@
 import { HttpType } from '@/common';
 import { IProcessRequestDto } from '@/models/requests';
-import { IApiResponseDto, IProcessResponseDto } from '@/models/responses';
+import { IApiResponseDto, IHistoryItemDto, IProcessResponseDto } from '@/models/responses';
 import { apiSlice } from '@/services';
 
 export const aiApiSlice = apiSlice.injectEndpoints({
@@ -12,7 +12,14 @@ export const aiApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        getHistory: builder.query<IApiResponseDto<IHistoryItemDto[]>, void>({
+            query: () => ({
+                url: '/api/prompt',
+                method: HttpType.GET,
+            }),
+        }),
     })
 });
 
 export const { useProcessMutation } = aiApiSlice;
+export const { useGetHistoryQuery } = aiApiSlice;

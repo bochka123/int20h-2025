@@ -6,7 +6,7 @@ import { BaseButton, BaseInput, Modal } from '@/components';
 import { getFormErrorMessage } from '@/helpers';
 import { useToast } from '@/hooks';
 import styles from '@/pages/auth/auth-page.module.scss';
-import { useIntegrateMutation } from '@/services/integration/integration.service.ts';
+import { useIntegrateMutation } from '@/services';
 
 type FormNames = {
     apiKey: string;
