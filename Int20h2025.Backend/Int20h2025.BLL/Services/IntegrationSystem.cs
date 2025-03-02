@@ -64,5 +64,14 @@ namespace Int20h2025.BLL.Services
 
             await context.SaveChangesAsync();
         }
+
+        public async Task<bool> CheckIntegrationAsync(CheckIntegrationSystemDTO checkIntegrationSystem)
+        {
+            var userId = userContextService.UserId;
+            var system = await context.Systems.FirstOrDefaultAsync(x => x.Name == checkIntegrationSystem.SystemName.ToString()) ?? throw new InternalPointerBobrException($"Integration with {checkIntegrationSystem.ToString()} cannot be created yet");
+            var integration = await context.Integrations.FirstOrDefaultAsync(x => x.ProfileId == userId && x.System.Name == system.Name);
+
+            return integration != null;
+        }
     }
 }

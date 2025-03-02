@@ -7,5 +7,6 @@ namespace Int20h2025.BLL.Interfaces
     {
         Task IntegrateUserAsync(TaskManagersEnum integrationSystem);
         Task IntegrateUserAsync(IntegrationSystemDTO integrationSystem);
+        Task<bool> CheckIntegrationAsync(CheckIntegrationSystemDTO checkIntegrationSystem);
     }
 }
