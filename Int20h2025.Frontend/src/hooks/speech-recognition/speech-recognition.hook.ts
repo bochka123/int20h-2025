@@ -3,6 +3,9 @@ import { useRef,useState } from 'react';
 import { ToastModeEnum } from '@/common';
 import { useToast } from '@/hooks';
 
+const grammar = '#JSGF V1.0; grammar words; public <word> = ' +
+    'trello | azure | azure devops | board | add task | delete task | update task;';
+
 type UseSpeechRecognitionReturnType = {
     message: string;
     isListening: boolean;
@@ -34,6 +37,10 @@ const useSpeechRecognition = (): UseSpeechRecognitionReturnType => {
         recognitionRef.current.lang = 'en-US';
         recognitionRef.current.interimResults = true;
         recognitionRef.current.maxAlternatives = 1;
+
+        const speechRecognitionList = new (window.SpeechGrammarList || window.webkitSpeechGrammarList)();
+        speechRecognitionList.addFromString(grammar, 1);
+        recognitionRef.current.grammars = speechRecognitionList;
 
         recognitionRef.current.onresult = (event) => {
             let transcript = '';
