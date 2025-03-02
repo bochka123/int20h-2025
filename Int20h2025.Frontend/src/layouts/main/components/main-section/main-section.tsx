@@ -1,8 +1,14 @@
-import { faArrowRightFromBracket, faArrowUp, faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
+import { faTrello } from '@fortawesome/free-brands-svg-icons';
+import {
+    faArrowRightFromBracket,
+    faArrowUp,
+    faMicrophone,
+    faMicrophoneSlash,
+} from '@fortawesome/free-solid-svg-icons';
 import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { IconButton, MultilineInput } from '@/components';
+import { BaseButton, IconButton, MultilineInput } from '@/components';
 import { useSpeechRecognition } from '@/hooks';
 import { useMainLayoutContext } from '@/layouts/main/hooks';
 import { useLogOutMutation, useProcessMutation } from '@/services';
@@ -67,7 +73,9 @@ const MainSection: FC<MainSectionProps> = () => {
     return (
         <div className={styles.mainSectionWrapper}>
             <div className={styles.header}>
-
+                <BaseButton iconRight={faTrello} classes={styles.trelloButton}>
+                    Sync with
+                </BaseButton>
             </div>
             <div className={styles.generalWrapper}>
                 <h1>Bobr intelligence</h1>

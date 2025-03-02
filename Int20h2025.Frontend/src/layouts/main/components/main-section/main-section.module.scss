@@ -11,7 +11,10 @@
 }
 
 .header {
-
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
 }
 
 .generalWrapper {
@@ -63,5 +66,29 @@
       width: 40px;
       height: 40px;
     }
+  }
+}
+
+.trelloButton {
+  background: c.dark(c.$blue, 1);
+  color: c.$dark-blue;
+  border-radius: 10px !important;
+
+  transition: background-color 0.2s ease;
+
+  font-size: 17px;
+
+  &:hover {
+    cursor: pointer;
+    background: c.dark(c.$blue, 2);
+  }
+
+  &:active {
+    background: c.dark(c.$blue, 3);
+  }
+
+  &.disabled {
+    pointer-events: none;
+    background-color: c.dark(c.$blue, 3);
   }
 }
