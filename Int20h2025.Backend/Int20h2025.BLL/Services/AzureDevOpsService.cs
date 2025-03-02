@@ -1,7 +1,9 @@
 ﻿using Int20h2025.Auth.Interfaces;
 using Int20h2025.BLL.Interfaces;
+using Int20h2025.Common.Enums;
 using Int20h2025.Common.Exceptions;
 using Int20h2025.Common.Models.Ai;
+using Int20h2025.DAL.Context;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.VisualStudio.Services.OAuth;
 using Microsoft.VisualStudio.Services.WebApi;
@@ -10,10 +12,11 @@ using Newtonsoft.Json.Linq;
 
 namespace Int20h2025.BLL.Services
 {
-    public class AzureDevOpsService(IUserContextService userContextService) : ITaskManager
+    public class AzureDevOpsService(Int20h2025Context context, IUserContextService userContextService) : ITaskManager
     {
-        public string SystemName { get; init; } = "AzureDevOps";
-        private readonly string _devOpsOrgUrl = "https://dev.azure.com/";
+        public DAL.Entities.System System => context.Systems.FirstOrDefault(x => x.Name == nameof(TaskManagersEnum.AzureDevOps))
+                                            ?? throw new InternalPointerBobrException("System not configured");
+
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
             switch (methodName)
@@ -56,7 +59,7 @@ namespace Int20h2025.BLL.Services
         {
             return new SystemMethodInfo
             {
-                SystemName = SystemName,
+                SystemName = System.Name,
                 Methods =
                     [
                     new ServiceMethodInfo
@@ -129,11 +132,11 @@ namespace Int20h2025.BLL.Services
             };
         }
 
-        private async Task<OperationResult> CreateTaskAsync(string title,string organizationName, string projectName, string assignedTo)
+        private async Task<OperationResult> CreateTaskAsync(string title, string organizationName, string projectName, string assignedTo)
         {
             var accessToken = userContextService.UserData ?? throw new InternalPointerBobrException("User must sign in devops firstly.");
             var credentials = new VssOAuthAccessTokenCredential(accessToken);
-            using (var connection = new VssConnection(new Uri(_devOpsOrgUrl + organizationName), credentials))
+            using (var connection = new VssConnection(new Uri(System.ApiBaseUrl + organizationName), credentials))
             {
                 var workItemClient = connection.GetClient<WorkItemTrackingHttpClient>();
 

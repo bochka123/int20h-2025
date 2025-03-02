@@ -6,7 +6,6 @@ using Int20h2025.BLL.Interfaces;
 using Int20h2025.BLL.Mappers;
 using Int20h2025.BLL.Services;
 using Int20h2025.BLL.Settings;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OpenAI.Chat;
@@ -18,11 +17,8 @@ namespace Int20h2025.BLL
     {
         public static IServiceCollection ConfigureBllServiceCollection(this IServiceCollection services)
         {
-            services.AddSingleton(sp =>
-            {
-                var appSettings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
-                return new TrelloClient(appSettings.Trello.ApiKey, appSettings.Trello.Token);
-            });
+            services.AddScoped<ITrelloAuthService, TrelloAuthService>();
+            services.AddScoped<CredsRegisterFactory>();
             services.AddScoped<TaskManagerFactory>();
             services.AddScoped<AiHelper>();
             services.AddScoped<IRequestProcessingService, RequestProcessingService>();

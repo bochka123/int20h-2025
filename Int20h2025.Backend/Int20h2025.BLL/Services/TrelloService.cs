@@ -1,14 +1,18 @@
 ﻿using Int20h2025.BLL.Interfaces;
+using Int20h2025.Common.Enums;
+using Int20h2025.Common.Exceptions;
 using Int20h2025.Common.Models.Ai;
+using Int20h2025.DAL.Context;
 using Newtonsoft.Json.Linq;
 using TrelloDotNet;
 using TrelloDotNet.Model;
 
 namespace Int20h2025.BLL.Services
 {
-    public class TrelloService(TrelloClient trelloClient) : ITaskManager
+    public class TrelloService(Int20h2025Context context, TrelloClient trelloClient) : ITaskManager
     {
-        public string SystemName { get; init; } = "Trello";
+        public DAL.Entities.System System => context.Systems.FirstOrDefault(x => x.Name == nameof(TaskManagersEnum.Trello))
+                                            ?? throw new InternalPointerBobrException("System not configured");
 
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
@@ -46,7 +50,7 @@ namespace Int20h2025.BLL.Services
         {
             return new SystemMethodInfo
             {
-                SystemName = SystemName,
+                SystemName = System.Name,
                 Methods =
                 [
                     new ServiceMethodInfo
