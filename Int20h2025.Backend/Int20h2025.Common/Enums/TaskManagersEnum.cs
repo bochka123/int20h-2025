@@ -2,6 +2,7 @@
 {
     public enum TaskManagersEnum
     {
-        AzureDevOps = 0
+        AzureDevOps = 0,
+        Trello = 1
     }
 }
