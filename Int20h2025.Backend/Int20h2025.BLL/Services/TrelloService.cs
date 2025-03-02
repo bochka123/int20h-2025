@@ -1,4 +1,5 @@
-﻿using Int20h2025.BLL.Interfaces;
+﻿using Int20h2025.Auth.Interfaces;
+using Int20h2025.BLL.Interfaces;
 using Int20h2025.Common.Enums;
 using Int20h2025.Common.Exceptions;
 using Int20h2025.Common.Models.Ai;
@@ -9,7 +10,7 @@ using TrelloDotNet.Model;
 
 namespace Int20h2025.BLL.Services
 {
-    public class TrelloService(Int20h2025Context context, ITrelloAuthService trelloAuthService) : ITaskManager
+    public class TrelloService(Int20h2025Context context, ITrelloAuthService trelloAuthService, IUserContextService userContextService) : ITaskManager
     {
         private TrelloClient trelloClient;
         public DAL.Entities.System System => context.Systems.FirstOrDefault(x => x.Name == nameof(TaskManagersEnum.Trello))
@@ -17,6 +18,10 @@ namespace Int20h2025.BLL.Services
 
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
+            var integration = context.Integrations.FirstOrDefault(x => x.SystemId == System.Id && x.ProfileId == userContextService.UserId);
+
+            if (integration == null) return new OperationResult { Response = $"User doesn't integrated with '{nameof(TaskManagersEnum.Trello)}'. Provide ApiKey and Token to integrate.", Success = false };
+
             trelloClient = (TrelloClient)trelloAuthService.GetClient();
             switch (methodName)
             {

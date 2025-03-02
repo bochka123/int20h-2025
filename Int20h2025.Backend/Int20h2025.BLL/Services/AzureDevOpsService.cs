@@ -19,6 +19,10 @@ namespace Int20h2025.BLL.Services
 
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
+            var integration = context.Integrations.FirstOrDefault(x => x.SystemId == System.Id && x.ProfileId == userContextService.UserId);
+
+            if (integration == null) return new OperationResult { Response = $"User doesn't integrated with '{nameof(TaskManagersEnum.AzureDevOps)}'. Login via Microsoft account.", Success = false };
+
             switch (methodName)
             {
                 case "CreateTask":
