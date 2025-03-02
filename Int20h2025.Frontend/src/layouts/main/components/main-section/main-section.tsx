@@ -6,22 +6,25 @@ import {
     faMicrophoneSlash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import { ToastModeEnum } from '@/common';
 import { BaseButton, IconButton, MultilineInput } from '@/components';
 import { useSpeechRecognition, useToast } from '@/hooks';
 import { useMainLayoutContext } from '@/layouts/main/hooks';
 import { SyncTrelloModal } from '@/modules';
 import { useLogOutMutation, useProcessMutation } from '@/services';
+import { logOut } from '@/store/auth';
 
 import styles from './main-section.module.scss';
-import { ToastModeEnum } from '@/common';
 
 type MainSectionProps = {}
 const MainSection: FC<MainSectionProps> = () => {
 
     const { addMessage } = useMainLayoutContext();
     const { addToast } = useToast();
+    const dispatch = useDispatch();
 
     const {
         message: speechMessage,
@@ -32,7 +35,7 @@ const MainSection: FC<MainSectionProps> = () => {
     } = useSpeechRecognition();
 
     const [process] = useProcessMutation();
-    const [logOut] = useLogOutMutation();
+    const [logOutMutation] = useLogOutMutation();
     const [isButtonDisabled, setButtonDisabled] = useState(false);
 
     const navigate = useNavigate();
@@ -52,6 +55,7 @@ const MainSection: FC<MainSectionProps> = () => {
             process({ prompt: message })
                 .then((res) => {
                     setButtonDisabled(false);
+                    setMessage('');
                     if (res.data?.data.clarification) {
                         addMessage({ message: res.data?.data.clarification });
                     } else {
@@ -72,8 +76,11 @@ const MainSection: FC<MainSectionProps> = () => {
     };
 
     const handleLogOut = (): void => {
-        logOut();
-        navigate('/auth');
+        logOutMutation()
+            .then(() => {
+                dispatch(logOut());
+                navigate('/auth');
+            });
     };
     
     return (
