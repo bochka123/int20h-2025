@@ -33,6 +33,7 @@ const SyncTrelloModal: FC<SyncTrelloModalProps> = ({ visible, setVisible }) => {
         }).unwrap()
             .then(() => {
                 addToast(ToastModeEnum.SUCCESS, 'Synchronized successfully');
+                setVisible(false);
             })
             .catch((error) => {
                 addToast(ToastModeEnum.ERROR, `Login failed: ${error.message}`);
