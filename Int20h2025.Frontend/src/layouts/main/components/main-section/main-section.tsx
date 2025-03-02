@@ -9,12 +9,13 @@ import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { ToastModeEnum } from '@/common';
+import { IntegrationSystemEnum, ToastModeEnum } from '@/common';
 import { BaseButton, IconButton, MultilineInput } from '@/components';
 import { useSpeechRecognition, useToast } from '@/hooks';
 import { useMainLayoutContext } from '@/layouts/main/hooks';
+import { IApiResponseDto } from '@/models/responses';
 import { SyncTrelloModal } from '@/modules';
-import { useLogOutMutation, useProcessMutation } from '@/services';
+import { useCheckIntegrationMutation, useLogOutMutation, useProcessMutation } from '@/services';
 import { logOut } from '@/store/auth';
 
 import styles from './main-section.module.scss';
@@ -25,6 +26,26 @@ const MainSection: FC<MainSectionProps> = () => {
     const { addMessage } = useMainLayoutContext();
     const { addToast } = useToast();
     const dispatch = useDispatch();
+
+    const [trelloStatus, setTrelloStatus] = useState<IApiResponseDto<null>>();
+    const [checkTrelloSuccess] = useCheckIntegrationMutation();
+
+    useEffect(() => {
+        if (!trelloStatus) {
+            checkTrelloSuccess({ systemName: IntegrationSystemEnum.TRELLO })
+                .unwrap()
+                .then((data) => {
+                    setTrelloStatus(data);
+                }).catch((error) => {
+                    setTrelloStatus({
+                        ok: false,
+                        message: error.message,
+                        data: null,
+                    });
+                    addToast(ToastModeEnum.ERROR, 'Error checking Trello integration');
+                });
+        }
+    }, []);
 
     const {
         message: speechMessage,
@@ -100,8 +121,10 @@ const MainSection: FC<MainSectionProps> = () => {
                     iconRight={faTrello}
                     onClick={() => setSyncTrelloModalVisible(true)}
                     classes={styles.trelloButton}
+                    isLoading={!trelloStatus}
+                    disabled={!trelloStatus}
                 >
-                    Sync with
+                    {trelloStatus && trelloStatus.ok ? 'Synchronized' : 'Sync with'}
                 </BaseButton>
             </div>
             <div className={styles.generalWrapper}>
