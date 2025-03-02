@@ -22,5 +22,9 @@ namespace Int20h2025.WebAPI.Controllers
             credsService.SetCredentials(model.ApiKey, model.Token);
             return Ok(new ApiResponse(true));
         }
+
+        [HttpPost("check")]
+        public async Task<ActionResult<ApiResponse>> Check([FromBody] CheckIntegrationSystemDTO model) => 
+            Ok(new ApiResponse(await integrationService.CheckIntegrationAsync(model)));
     }
 }
