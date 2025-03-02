@@ -127,6 +127,7 @@ const MainSection: FC<MainSectionProps> = () => {
                     {trelloStatus && trelloStatus.ok ? 'Synchronized' : 'Sync with'}
                 </BaseButton>
             </div>
+
             <div className={styles.generalWrapper}>
                 <h1>Bobr intelligence</h1>
                 <div className={styles.inputWrapper}>
@@ -149,6 +150,7 @@ const MainSection: FC<MainSectionProps> = () => {
                     </div>
                 </div>
             </div>
+
             <div className={styles.footer}>
                 <IconButton
                     icon={!isListening ? faMicrophone : faMicrophoneSlash}
