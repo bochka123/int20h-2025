@@ -10,28 +10,28 @@ namespace Int20h2025.BLL.Services
         {
             var history = await promptService.GetHistoryAsync();
             var command = await aiService.ProccessUserPromptAsync(request.Prompt, history.Select(x => x.ToString()));
-            if (command.Clarification != null)
+            if (command.Method == null)
             {
                 await promptService.CreateAsync(new Common.Models.DTO.Prompt.PromptDTO
                 {
                     Success = false,
                     Text = request.Prompt,
-                    Result = command.Clarification
+                    Result = command?.Clarification
                 });
 
                 return new AiResponse
                 {
-                    Message = command.Clarification
+                    Clarification = command?.Clarification
                 };
             }
 
-            var taskManager = taskManagerFactory.GetTaskManager(Common.Enums.TaskManagersEnum.AzureDevOps);
+            var taskManager = taskManagerFactory.GetTaskManager(Common.Enums.TaskManagersEnum.Trello);
             var response = await taskManager.ExecuteMethodAsync(command.Method, command.Parameters);
             var aiResp = await aiService.ProcessUserResponseAsync(response.Success, response.Response);
             await promptService.CreateAsync(new Common.Models.DTO.Prompt.PromptDTO
             {
                 Text = request.Prompt,
-                Result = aiResp.Message,
+                Result = aiResp.Clarification,
                 Success = true
             });
 
