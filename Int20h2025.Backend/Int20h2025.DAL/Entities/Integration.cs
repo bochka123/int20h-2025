@@ -10,9 +10,13 @@ namespace Int20h2025.DAL.Entities
 
         public Guid ProfileId { get; set; }
         public Profile Profile { get; set; } = null!;
+        public Guid SystemId { get; set; }
+        public System System { get; set; } = null!;
         public string? AccessToken { get; set; }
         public string? RefreshToken { get; set; }
         public string? ExpiresAt { get; set; }
         public bool IsConnected { get; set; }
+        public string? ApiKey { get; set; }
+        public string? Token { get; set; }
     }
 }

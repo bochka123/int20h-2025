@@ -5,7 +5,7 @@ namespace Int20h2025.BLL.Interfaces
 {
     public interface ITaskManager
     {
-        public string SystemName { get; init; }
+        public DAL.Entities.System System { get; }
         Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters);
         SystemMethodInfo GetAvailableMethods();
     }
