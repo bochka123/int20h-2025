@@ -1,17 +1,26 @@
-import { faArrowRightFromBracket, faArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { FC, KeyboardEventHandler, useState } from 'react';
+import { faArrowRightFromBracket, faArrowUp, faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
+import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IconButton, MultilineInput } from '@/components';
+import { useSpeechRecognition } from '@/hooks';
+import { useMainLayoutContext } from '@/layouts/main/hooks';
 import { useLogOutMutation, useProcessMutation } from '@/services';
 
 import styles from './main-section.module.scss';
-import { useMainLayoutContext } from '@/layouts/main/hooks';
 
 type MainSectionProps = {}
 const MainSection: FC<MainSectionProps> = () => {
 
     const { addMessage } = useMainLayoutContext();
+
+    const {
+        message: speechMessage,
+        isSupported,
+        isListening,
+        startRecognition,
+        stopRecognition
+    } = useSpeechRecognition();
 
     const [process] = useProcessMutation();
     const [logOut] = useLogOutMutation();
@@ -20,6 +29,12 @@ const MainSection: FC<MainSectionProps> = () => {
     const navigate = useNavigate();
 
     const [message, setMessage] = useState<string>('');
+    
+    useEffect(() => {
+        if (isSupported && isListening) {
+            setMessage(speechMessage);
+        }
+    }, [speechMessage]);
 
     const handleSubmit = (): void => {
         if (message) {
@@ -77,7 +92,15 @@ const MainSection: FC<MainSectionProps> = () => {
                 </div>
             </div>
             <div className={styles.footer}>
-                <IconButton icon={faArrowRightFromBracket} onClick={handleLogOut} />
+                <IconButton
+                    icon={!isListening ? faMicrophone : faMicrophoneSlash}
+                    onClick={!isListening ? startRecognition : stopRecognition}
+                    disabled={!isSupported}
+                />
+                <IconButton
+                    icon={faArrowRightFromBracket}
+                    onClick={handleLogOut}
+                />
             </div>
         </div>
     );
