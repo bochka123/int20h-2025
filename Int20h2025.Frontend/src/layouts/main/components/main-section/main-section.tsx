@@ -14,6 +14,7 @@ import { useMainLayoutContext } from '@/layouts/main/hooks';
 import { useLogOutMutation, useProcessMutation } from '@/services';
 
 import styles from './main-section.module.scss';
+import { SyncTrelloModal } from '@/modules';
 
 type MainSectionProps = {}
 const MainSection: FC<MainSectionProps> = () => {
@@ -35,6 +36,7 @@ const MainSection: FC<MainSectionProps> = () => {
     const navigate = useNavigate();
 
     const [message, setMessage] = useState<string>('');
+    const [syncTrelloModalVisible, setSyncTrelloModalVisible] = useState(false);
     
     useEffect(() => {
         if (isSupported && isListening) {
@@ -73,7 +75,11 @@ const MainSection: FC<MainSectionProps> = () => {
     return (
         <div className={styles.mainSectionWrapper}>
             <div className={styles.header}>
-                <BaseButton iconRight={faTrello} classes={styles.trelloButton}>
+                <BaseButton
+                    iconRight={faTrello}
+                    onClick={() => setSyncTrelloModalVisible(true)}
+                    classes={styles.trelloButton}
+                >
                     Sync with
                 </BaseButton>
             </div>
@@ -110,6 +116,11 @@ const MainSection: FC<MainSectionProps> = () => {
                     onClick={handleLogOut}
                 />
             </div>
+
+            <SyncTrelloModal
+                visible={syncTrelloModalVisible}
+                setVisible={setSyncTrelloModalVisible}
+            />
         </div>
     );
 };
