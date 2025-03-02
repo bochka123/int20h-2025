@@ -9,7 +9,7 @@ namespace Int20h2025.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [MainAuth]
     public class AiController(IRequestProcessingService processingService) : ControllerBase
     {
         [HttpPost("process")]

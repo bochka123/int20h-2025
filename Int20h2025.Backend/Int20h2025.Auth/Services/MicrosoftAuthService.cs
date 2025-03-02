@@ -10,19 +10,17 @@ using System.Security.Claims;
 
 namespace Int20h2025.Auth.Services
 {
-    public class MicrosoftAuthService(AuthSettings authSettings, HttpClient _httpClient, IAuthContext context, IAuthService authService) : IMicrosoftAuthService
+    public class MicrosoftAuthService(AuthSettings authSettings, IUserContextService userContextService, IAuthContext context, IAuthService authService) : IMicrosoftAuthService
     {
         public async Task SignInAsync(MicrosoftSignModel model)
         {
             if (string.IsNullOrEmpty(model.AccessToken))
                 throw new ArgumentException("Access token is required");
 
-            var userClaims = ValidateAndParseToken(model.AccessToken);
-            if (userClaims == null)
-                throw new UnauthorizedAccessException("Invalid Microsoft access token.");
+            var userClaims = await ValidateAndParseToken(model.AccessToken)
+                ?? throw new UnauthorizedAccessException("Invalid Microsoft access token.");
 
-            var email = userClaims.FindFirst(ClaimTypes.Email)?.Value ?? userClaims.FindFirst("preferred_username")?.Value;
-            var name = userClaims.FindFirst(ClaimTypes.Name)?.Value;
+            var email = userClaims.Identity?.Name;
 
             if (string.IsNullOrEmpty(email))
                 throw new UnauthorizedAccessException("Email is missing in the token");
@@ -41,24 +39,22 @@ namespace Int20h2025.Auth.Services
             }
 
             authService.SetupAuth(user.Id);
+            userContextService.CacheData(model.AccessToken);
         }
 
-        private ClaimsPrincipal? ValidateAndParseToken(string accessToken)
+        private async Task<ClaimsPrincipal?> ValidateAndParseToken(string accessToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
+            var publikKeys = await GetPublicKeysAsync();
             var validationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = false, // TODO: change to validate
-                ValidIssuer = "https://login.microsoftonline.com/common/oauth2/v2.0",
+                IssuerSigningKeys = publikKeys.Keys,
+                ValidIssuer = $"https://sts.windows.net/{authSettings.AzureAd.TenantId}/",
+                ValidateIssuer = true,
+                ValidAudience = authSettings.AzureAd.Audience,
                 ValidateAudience = true,
-                ValidAudiences = [authSettings.AzureAd.ClientId, $"api://{authSettings.AzureAd.ApplicationIdUri}"],
                 ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
-                {
-                    var keys = _httpClient.GetStringAsync("https://login.microsoftonline.com/common/discovery/v2.0/keys").Result;
-                    return new JsonWebKeySet(keys).Keys;
-                }
+                ValidateIssuerSigningKey = true
             };
 
             try
@@ -70,6 +66,13 @@ namespace Int20h2025.Auth.Services
             {
                 return null;
             }
+        }
+
+        private async Task<JsonWebKeySet> GetPublicKeysAsync()
+        {
+            using var client = new HttpClient();
+            var response = await client.GetStringAsync($"https://login.microsoftonline.com/{authSettings.AzureAd.TenantId}/discovery/v2.0/keys");
+            return new JsonWebKeySet(response);
         }
     }
 }
