@@ -6,6 +6,5 @@ namespace Int20h2025.BLL.Settings
     {
         public AuthSettings Auth { get; set; } = null!;
         public AiSettings Ai { get; set; } = null!;
-        public TrelloSettings Trello { get; set; } = null!;
     }
 }

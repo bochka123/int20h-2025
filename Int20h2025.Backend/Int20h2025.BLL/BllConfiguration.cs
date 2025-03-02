@@ -17,11 +17,8 @@ namespace Int20h2025.BLL
     {
         public static IServiceCollection ConfigureBllServiceCollection(this IServiceCollection services)
         {
-            services.AddSingleton(sp =>
-            {
-                var appSettings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
-                return new TrelloClient(appSettings.Trello.ApiKey, appSettings.Trello.Token);
-            });
+            services.AddScoped<ITrelloAuthService, TrelloAuthService>();
+            services.AddScoped<CredsRegisterFactory>();
             services.AddScoped<TaskManagerFactory>();
             services.AddScoped<AiHelper>();
             services.AddScoped<IRequestProcessingService, RequestProcessingService>();
@@ -29,6 +26,7 @@ namespace Int20h2025.BLL
             services.AddScoped<IAiService, AiService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IPromptService, PromptService>();
+            services.AddScoped<IIntegrationService, IntegrationSystem>();
             services.AddAutoMapper(typeof(MapperProfile));
             return services;
         }

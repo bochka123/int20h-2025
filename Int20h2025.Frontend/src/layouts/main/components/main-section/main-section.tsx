@@ -1,25 +1,53 @@
-import { faArrowRightFromBracket, faArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { FC, KeyboardEventHandler, useState } from 'react';
+import { faTrello } from '@fortawesome/free-brands-svg-icons';
+import {
+    faArrowRightFromBracket,
+    faArrowUp,
+    faMicrophone,
+    faMicrophoneSlash,
+} from '@fortawesome/free-solid-svg-icons';
+import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { IconButton, MultilineInput } from '@/components';
+import { ToastModeEnum } from '@/common';
+import { BaseButton, IconButton, MultilineInput } from '@/components';
+import { useSpeechRecognition, useToast } from '@/hooks';
+import { useMainLayoutContext } from '@/layouts/main/hooks';
+import { SyncTrelloModal } from '@/modules';
 import { useLogOutMutation, useProcessMutation } from '@/services';
+import { logOut } from '@/store/auth';
 
 import styles from './main-section.module.scss';
-import { useMainLayoutContext } from '@/layouts/main/hooks';
 
 type MainSectionProps = {}
 const MainSection: FC<MainSectionProps> = () => {
 
     const { addMessage } = useMainLayoutContext();
+    const { addToast } = useToast();
+    const dispatch = useDispatch();
+
+    const {
+        message: speechMessage,
+        isSupported,
+        isListening,
+        startRecognition,
+        stopRecognition
+    } = useSpeechRecognition();
 
     const [process] = useProcessMutation();
-    const [logOut] = useLogOutMutation();
+    const [logOutMutation] = useLogOutMutation();
     const [isButtonDisabled, setButtonDisabled] = useState(false);
 
     const navigate = useNavigate();
 
     const [message, setMessage] = useState<string>('');
+    const [syncTrelloModalVisible, setSyncTrelloModalVisible] = useState(false);
+    
+    useEffect(() => {
+        if (isSupported && isListening) {
+            setMessage(speechMessage);
+        }
+    }, [speechMessage]);
 
     const handleSubmit = (): void => {
         if (message) {
@@ -27,13 +55,16 @@ const MainSection: FC<MainSectionProps> = () => {
             process({ prompt: message })
                 .then((res) => {
                     setButtonDisabled(false);
-                    if (res.data) {
-                        addMessage({ message: res.data.data.clarification });
+                    setMessage('');
+                    if (res.data?.data.clarification) {
+                        addMessage({ message: res.data?.data.clarification });
+                    } else {
+                        addToast(ToastModeEnum.ERROR, 'AI did not generate correct answer. Please try again');
                     }
                 })
                 .catch((err) => {
                     setButtonDisabled(false);
-                    console.error(err);
+                    addToast(ToastModeEnum.ERROR, err.message);
                 });
         }
     };
@@ -45,14 +76,23 @@ const MainSection: FC<MainSectionProps> = () => {
     };
 
     const handleLogOut = (): void => {
-        logOut();
-        navigate('/auth');
+        logOutMutation()
+            .then(() => {
+                dispatch(logOut());
+                navigate('/auth');
+            });
     };
     
     return (
         <div className={styles.mainSectionWrapper}>
             <div className={styles.header}>
-
+                <BaseButton
+                    iconRight={faTrello}
+                    onClick={() => setSyncTrelloModalVisible(true)}
+                    classes={styles.trelloButton}
+                >
+                    Sync with
+                </BaseButton>
             </div>
             <div className={styles.generalWrapper}>
                 <h1>Bobr intelligence</h1>
@@ -77,8 +117,21 @@ const MainSection: FC<MainSectionProps> = () => {
                 </div>
             </div>
             <div className={styles.footer}>
-                <IconButton icon={faArrowRightFromBracket} onClick={handleLogOut} />
+                <IconButton
+                    icon={!isListening ? faMicrophone : faMicrophoneSlash}
+                    onClick={!isListening ? startRecognition : stopRecognition}
+                    disabled={!isSupported}
+                />
+                <IconButton
+                    icon={faArrowRightFromBracket}
+                    onClick={handleLogOut}
+                />
             </div>
+
+            <SyncTrelloModal
+                visible={syncTrelloModalVisible}
+                setVisible={setSyncTrelloModalVisible}
+            />
         </div>
     );
 };

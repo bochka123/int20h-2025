@@ -41,6 +41,51 @@ namespace Int20h2025.DAL.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Int20h2025.DAL.Entities.Integration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccessToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApiKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExpiresAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsConnected")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SystemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
+
+                    b.HasIndex("SystemId");
+
+                    b.ToTable("Integrations");
+                });
+
             modelBuilder.Entity("Int20h2025.DAL.Entities.Profile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -129,6 +174,54 @@ namespace Int20h2025.DAL.Migrations
                     b.ToTable("PromptHistories");
                 });
 
+            modelBuilder.Entity("Int20h2025.DAL.Entities.System", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApiBaseUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Systems");
+                });
+
+            modelBuilder.Entity("Int20h2025.DAL.Entities.Integration", b =>
+                {
+                    b.HasOne("Int20h2025.DAL.Entities.Profile", "Profile")
+                        .WithMany("Integrations")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Int20h2025.DAL.Entities.System", "System")
+                        .WithMany()
+                        .HasForeignKey("SystemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
+
+                    b.Navigation("System");
+                });
+
             modelBuilder.Entity("Int20h2025.DAL.Entities.Profile", b =>
                 {
                     b.HasOne("Int20h2025.Auth.Entities.User", "User")
@@ -172,6 +265,8 @@ namespace Int20h2025.DAL.Migrations
 
             modelBuilder.Entity("Int20h2025.DAL.Entities.Profile", b =>
                 {
+                    b.Navigation("Integrations");
+
                     b.Navigation("Prompts");
                 });
 

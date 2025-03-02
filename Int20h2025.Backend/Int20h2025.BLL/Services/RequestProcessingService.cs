@@ -25,7 +25,7 @@ namespace Int20h2025.BLL.Services
                 };
             }
 
-            var taskManager = taskManagerFactory.GetTaskManager(Common.Enums.TaskManagersEnum.AzureDevOps);
+            var taskManager = taskManagerFactory.GetTaskManager(command.System!);
             var response = await taskManager.ExecuteMethodAsync(command.Method, command.Parameters);
             var aiResp = await aiService.ProcessUserResponseAsync(response.Success, response.Response);
             await promptService.CreateAsync(new Common.Models.DTO.Prompt.PromptDTO

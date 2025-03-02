@@ -1,4 +1,5 @@
-﻿using Int20h2025.DAL.Context;
+﻿using Int20h2025.Common.Enums;
+using Int20h2025.DAL.Context;
 using Int20h2025.DAL.Interfaces;
 
 namespace Int20h2025.DAL.Helpers
@@ -9,7 +10,17 @@ namespace Int20h2025.DAL.Helpers
 
         public async Task SeedAsync()
         {
-            
+            if (!_context.Systems.Any())
+            {
+                var systems = new List<Entities.System>
+                {
+                    new() { Id = Guid.NewGuid(), Name = nameof(TaskManagersEnum.AzureDevOps), Description = "", ApiBaseUrl = "https://dev.azure.com/" },
+                    new() { Id = Guid.NewGuid(), Name = nameof(TaskManagersEnum.Trello), Description = "", ApiBaseUrl = "" },
+                };
+
+                _context.Systems.AddRange(systems);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

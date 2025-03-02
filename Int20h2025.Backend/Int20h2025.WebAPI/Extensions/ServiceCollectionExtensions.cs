@@ -9,6 +9,7 @@ using Int20h2025.DAL.Helpers;
 using Int20h2025.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
 
 namespace Int20h2025.WebAPI.Extensions
 {
@@ -16,7 +17,10 @@ namespace Int20h2025.WebAPI.Extensions
     {
         public static IServiceCollection AddInt20hServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddCors(options =>

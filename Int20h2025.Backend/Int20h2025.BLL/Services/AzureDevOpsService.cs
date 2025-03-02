@@ -1,6 +1,9 @@
 ﻿using Int20h2025.Auth.Interfaces;
 using Int20h2025.BLL.Interfaces;
+using Int20h2025.Common.Enums;
+using Int20h2025.Common.Exceptions;
 using Int20h2025.Common.Models.Ai;
+using Int20h2025.DAL.Context;
 using Int20h2025.Common.Models.AzureDevops;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
@@ -8,13 +11,17 @@ using System.Text;
 
 namespace Int20h2025.BLL.Services
 {
-    public class AzureDevOpsService(IUserContextService userContextService, HttpClient httpClient) : ITaskManager
+    public class AzureDevOpsService(Int20h2025Context context, IUserContextService userContextService, HttpClient httpClient) : ITaskManager
     {
-        public string SystemName { get; init; } = "AzureDevOps";
-        private readonly string _devOpsUrl = "https://dev.azure.com/";
+        public DAL.Entities.System System => context.Systems.FirstOrDefault(x => x.Name == nameof(TaskManagersEnum.AzureDevOps))
+                                            ?? throw new InternalPointerBobrException("System not configured");
 
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
+            var integration = context.Integrations.FirstOrDefault(x => x.SystemId == System.Id && x.ProfileId == userContextService.UserId);
+
+            if (integration == null) return new OperationResult { Response = $"User doesn't integrated with '{nameof(TaskManagersEnum.AzureDevOps)}'. Login via Microsoft account.", Success = false };
+
             switch (methodName)
             {
                 case "CreateTask":
@@ -321,7 +328,7 @@ namespace Int20h2025.BLL.Services
         {
             return new SystemMethodInfo
             {
-                SystemName = SystemName,
+                SystemName = System.Name,
                 Methods =
                 [
                     new ServiceMethodInfo
