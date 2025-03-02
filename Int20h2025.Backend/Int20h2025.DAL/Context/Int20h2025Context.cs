@@ -12,6 +12,8 @@ namespace Int20h2025.DAL.Context
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Prompt> Prompts { get; set; }
         public DbSet<PromptHistory> PromptHistories { get; set; }
+        public DbSet<Entities.System> Systems { get; set; }
+        public DbSet<Integration> Integrations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,6 +34,18 @@ namespace Int20h2025.DAL.Context
                 .HasOne(ph => ph.Prompt)
                 .WithMany(p => p.History)
                 .HasForeignKey(ph => ph.PromptId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Integration>()
+                 .HasOne(i => i.Profile)
+                 .WithMany(u => u.Integrations)
+                 .HasForeignKey(i => i.ProfileId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Integration>()
+                .HasOne(i => i.System)
+                .WithMany()
+                .HasForeignKey(i => i.SystemId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
 

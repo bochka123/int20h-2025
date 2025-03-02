@@ -4,6 +4,8 @@ import { ButtonHTMLAttributes, FC, FormEvent, MouseEvent } from 'react';
 import { ButtonLevelEnum, ButtonSizeEnum, useCommonButtonFunctions } from '../common';
 // @ts-ignore
 import styles from './base-button.module.scss';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type BaseButtonProps = {
     level?: ButtonLevelEnum,
@@ -15,6 +17,8 @@ type BaseButtonProps = {
     buttonClasses?: string,
     isLoading?: boolean,
     enableHover?: boolean,
+    iconRight?: IconDefinition,
+    classes?: string,
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 const BaseButton: FC<BaseButtonProps> = ({
@@ -26,6 +30,8 @@ const BaseButton: FC<BaseButtonProps> = ({
                                              buttonClasses,
                                              isLoading,
                                              enableHover = true,
+                                             iconRight,
+                                             classes,
                                              ...props
                                          }) => {
     const { isFocused, handleFocus, handleBlur, handleClick } = useCommonButtonFunctions(props, onClick);
@@ -39,7 +45,8 @@ const BaseButton: FC<BaseButtonProps> = ({
             ${transparent ? styles['transparent'] : ''}
             ${buttonClasses || ''} 
             ${isLoading ? styles.loading : ''}
-            ${enableHover ? styles.hover : ''}`}
+            ${enableHover ? styles.hover : ''}
+            ${classes || ''}`}
             onClick={(e) => handleClick(e)}
             onMouseDown={handleFocus}
             onMouseUp={handleBlur}
@@ -48,6 +55,7 @@ const BaseButton: FC<BaseButtonProps> = ({
 
             <span className={styles.text}>
                 {children}
+                {iconRight && <FontAwesomeIcon icon={iconRight} />}
             </span>
         </button>
     );
