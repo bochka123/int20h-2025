@@ -15,6 +15,7 @@ namespace Int20h2025.BLL.Services
     {
         public DAL.Entities.System System => context.Systems.FirstOrDefault(x => x.Name == nameof(TaskManagersEnum.AzureDevOps))
                                             ?? throw new InternalPointerBobrException("System not configured");
+        private const string _devOpsUrl = "https://dev.azure.com/";
 
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {

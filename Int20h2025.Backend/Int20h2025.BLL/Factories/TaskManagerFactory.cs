@@ -13,7 +13,7 @@ namespace Int20h2025.BLL.Factories
         {
             return taskManager switch
             {
-                nameof(TaskManagersEnum.AzureDevOps) => new AzureDevOpsService(userContextService, httpClient),
+                nameof(TaskManagersEnum.AzureDevOps) => new AzureDevOpsService(context, userContextService, httpClient),
                 nameof(TaskManagersEnum.Trello) => new TrelloService(context, trelloAuthService, userContextService),
                 _ => throw new NotImplementedException("Task manager is not implemented by factory!")
             };
