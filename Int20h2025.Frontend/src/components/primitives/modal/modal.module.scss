@@ -32,6 +32,8 @@
   min-width: 400px;
   max-height: calc(100vh - 24px);
   overflow: hidden;
+  background: c.dark(c.$primary, 2);
+  color: c.$light;
 }
 
 .container {
@@ -54,11 +56,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: c.$primary;
+    color: c.dark(c.$light, 2);
   }
 
   & .close:hover {
-    color: color.mix(c.$primary, #000, 50%);
+    color: c.dark(c.$light, 4);
     cursor: pointer;
   }
 }
