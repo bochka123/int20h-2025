@@ -1,13 +1,46 @@
 @use "@/styles/variables/color-variables.scss" as c;
+@use "@/styles/mixins/scrollbar-mixin.scss" as scrollbar;
 
 .historySectionWrapper {
   display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
   color: c.$light;
+  gap: 10px;
 
   background: c.dark(c.$primary, 1);
   border-radius: 10px;
 
   padding: 10px;
+
+  overflow-y: auto;
+  @include scrollbar.scrollbar-style(c.dark(c.$blue, 3));
+
+  & > p {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.messagesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 5px;
+}
+
+.space {
+  height: 10px;
+}
+
+.title {
+  font-weight: bold;
 }

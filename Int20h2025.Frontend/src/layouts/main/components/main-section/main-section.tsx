@@ -36,12 +36,21 @@ const MainSection: FC<MainSectionProps> = () => {
 
     const [process] = useProcessMutation();
     const [logOutMutation] = useLogOutMutation();
-    const [isButtonDisabled, setButtonDisabled] = useState(false);
+
+    const { addHistory, messageFromHistory, setMessageFromHistory } = useMainLayoutContext();
+
+    useEffect(() => {
+        if (messageFromHistory) {
+            setMessage(messageFromHistory);
+            setMessageFromHistory(null);
+        }
+    }, [messageFromHistory]);
 
     const navigate = useNavigate();
 
     const [message, setMessage] = useState<string>('');
     const [syncTrelloModalVisible, setSyncTrelloModalVisible] = useState(false);
+    const [isButtonDisabled, setButtonDisabled] = useState(false);
     
     useEffect(() => {
         if (isSupported && isListening) {
@@ -58,6 +67,7 @@ const MainSection: FC<MainSectionProps> = () => {
                     setMessage('');
                     if (res.data?.data.clarification) {
                         addMessage({ message: res.data?.data.clarification });
+                        addHistory({ text: message, result: res.data.data.clarification, success: res.data.ok });
                     } else {
                         addToast(ToastModeEnum.ERROR, 'AI did not generate correct answer. Please try again');
                     }
