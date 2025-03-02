@@ -9,17 +9,19 @@ import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { BaseButton, IconButton, MultilineInput } from '@/components';
-import { useSpeechRecognition } from '@/hooks';
+import { useSpeechRecognition, useToast } from '@/hooks';
 import { useMainLayoutContext } from '@/layouts/main/hooks';
+import { SyncTrelloModal } from '@/modules';
 import { useLogOutMutation, useProcessMutation } from '@/services';
 
 import styles from './main-section.module.scss';
-import { SyncTrelloModal } from '@/modules';
+import { ToastModeEnum } from '@/common';
 
 type MainSectionProps = {}
 const MainSection: FC<MainSectionProps> = () => {
 
     const { addMessage } = useMainLayoutContext();
+    const { addToast } = useToast();
 
     const {
         message: speechMessage,
@@ -50,13 +52,15 @@ const MainSection: FC<MainSectionProps> = () => {
             process({ prompt: message })
                 .then((res) => {
                     setButtonDisabled(false);
-                    if (res.data) {
-                        addMessage({ message: res.data.data.clarification });
+                    if (res.data?.data.clarification) {
+                        addMessage({ message: res.data?.data.clarification });
+                    } else {
+                        addToast(ToastModeEnum.ERROR, 'AI did not generate correct answer. Please try again');
                     }
                 })
                 .catch((err) => {
                     setButtonDisabled(false);
-                    console.error(err);
+                    addToast(ToastModeEnum.ERROR, err.message);
                 });
         }
     };
