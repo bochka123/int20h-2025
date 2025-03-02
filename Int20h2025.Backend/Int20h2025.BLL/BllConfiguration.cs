@@ -30,6 +30,7 @@ namespace Int20h2025.BLL
             services.AddScoped<IAiService, AiService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IPromptService, PromptService>();
+            services.AddScoped<IIntegrationService, IntegrationSystem>();
             services.AddAutoMapper(typeof(MapperProfile));
             return services;
         }
