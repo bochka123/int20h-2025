@@ -9,13 +9,15 @@ using TrelloDotNet.Model;
 
 namespace Int20h2025.BLL.Services
 {
-    public class TrelloService(Int20h2025Context context, TrelloClient trelloClient) : ITaskManager
+    public class TrelloService(Int20h2025Context context, ITrelloAuthService trelloAuthService) : ITaskManager
     {
+        private TrelloClient trelloClient;
         public DAL.Entities.System System => context.Systems.FirstOrDefault(x => x.Name == nameof(TaskManagersEnum.Trello))
                                             ?? throw new InternalPointerBobrException("System not configured");
 
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
+            trelloClient = (TrelloClient)trelloAuthService.GetClient();
             switch (methodName)
             {
                 case "CreateTask":

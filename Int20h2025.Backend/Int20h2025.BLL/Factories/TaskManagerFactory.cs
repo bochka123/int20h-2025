@@ -9,12 +9,12 @@ namespace Int20h2025.BLL.Factories
 {
     public class TaskManagerFactory(Int20h2025Context context, ITrelloAuthService trelloAuthService, IUserContextService userContextService)
     {
-        public ITaskManager GetTaskManager(TaskManagersEnum taskManager)
+        public ITaskManager GetTaskManager(string taskManager)
         {
             return taskManager switch
             {
-                TaskManagersEnum.AzureDevOps => new AzureDevOpsService(context, userContextService),
-                TaskManagersEnum.Trello => new TrelloService(context, (TrelloClient)trelloAuthService.GetClient()),
+                nameof(TaskManagersEnum.AzureDevOps) => new AzureDevOpsService(context, userContextService),
+                nameof(TaskManagersEnum.Trello) => new TrelloService(context, trelloAuthService),
                 _ => throw new NotImplementedException("Task manager is not implemented by factory!")
             };
         }
