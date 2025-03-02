@@ -37,7 +37,8 @@ jobs:
           --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
           --build-arg VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }} \
           --build-arg VITE_AZURE_CLIENT_ID=${{ secrets.VITE_AZURE_CLIENT_ID }} \
-          --build-arg VITE_APPLICATION_ID_URI=${{ secrets.VITE_APPLICATION_ID_URI }} \
+          --build-arg VITE_AZURE_AUTHORITY=${{ secrets.VITE_AZURE_AUTHORITY }} \
+          --build-arg VITE_AZURE_SCOPES=${{ secrets.VITE_AZURE_SCOPES }} \
           --build-arg VITE_APPLICATION_REDIRECT_URI=${{ secrets.VITE_APPLICATION_REDIRECT_URI }} \
           -t int20h.azurecr.io/frontend:${{ github.sha }}
         docker push int20h.azurecr.io/frontend:${{ github.sha }}
