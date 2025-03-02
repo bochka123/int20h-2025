@@ -6,4 +6,10 @@ interface IProcessResponseDto {
     clarification: string;
 }
 
-export { type IMessageDto, type IProcessResponseDto };
+interface IHistoryItemDto {
+    text: string;
+    result: string;
+    success: boolean;
+}
+
+export { type IHistoryItemDto, type IMessageDto, type IProcessResponseDto };

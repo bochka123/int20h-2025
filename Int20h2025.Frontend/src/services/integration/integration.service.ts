@@ -1,4 +1,4 @@
-import { HttpType } from '@/common';
+import { HttpType, IntegrationSystemEnum } from '@/common';
 import { IIntegrationRequestDto } from '@/models/requests';
 import { IApiResponseDto } from '@/models/responses';
 import { apiSlice } from '@/services';
@@ -12,7 +12,15 @@ export const integrationApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        checkIntegration: builder.mutation<IApiResponseDto<null>, { systemName: IntegrationSystemEnum }>({
+            query: (data) => ({
+                url: '/api/integration/check',
+                method: HttpType.POST,
+                body: data,
+            }),
+        })
     })
 });
 
 export const { useIntegrateMutation } = integrationApiSlice;
+export const { useCheckIntegrationMutation } = integrationApiSlice;

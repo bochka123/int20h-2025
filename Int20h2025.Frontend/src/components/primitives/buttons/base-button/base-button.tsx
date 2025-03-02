@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { ButtonHTMLAttributes, FC, FormEvent, MouseEvent } from 'react';
 
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { ButtonLevelEnum, ButtonSizeEnum, useCommonButtonFunctions } from '../common';
 // @ts-ignore
 import styles from './base-button.module.scss';
@@ -55,7 +56,7 @@ const BaseButton: FC<BaseButtonProps> = ({
 
             <span className={styles.text}>
                 {children}
-                {iconRight && <FontAwesomeIcon icon={iconRight} />}
+                {iconRight && <FontAwesomeIcon icon={!isLoading ? iconRight : faSpinner} />}
             </span>
         </button>
     );

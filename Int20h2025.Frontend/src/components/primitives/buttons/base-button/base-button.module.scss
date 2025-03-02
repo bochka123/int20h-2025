@@ -1,6 +1,15 @@
 @use "@/styles/variables/font-variables" as t;
 @use '@/styles/variables/color-variables.scss' as c;
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .button {
   position: relative;
   display: flex;
@@ -31,8 +40,9 @@
     background: c.dark(c.$blue, 5);
   }
 
-  &.loading > .text {
-    color: transparent;
+  &.loading svg {
+    animation: spin 1s linear infinite;
+    //color: transparent;
   }
 
   & .text {
