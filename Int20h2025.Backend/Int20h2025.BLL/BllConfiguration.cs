@@ -23,9 +23,9 @@ namespace Int20h2025.BLL
                 var appSettings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
                 return new TrelloClient(appSettings.Trello.ApiKey, appSettings.Trello.Token);
             });
+            services.AddScoped<TaskManagerFactory>();
+            services.AddScoped<AiHelper>();
             services.AddScoped<IRequestProcessingService, RequestProcessingService>();
-            services.AddSingleton<TaskManagerFactory>();
-            services.AddSingleton<AiHelper>();
             services.ConfigureAiClient();
             services.AddScoped<IAiService, AiService>();
             services.AddScoped<IProfileService, ProfileService>();

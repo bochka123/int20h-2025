@@ -1,21 +1,29 @@
-﻿using Int20h2025.BLL.Interfaces;
+﻿using Int20h2025.Auth.Interfaces;
+using Int20h2025.BLL.Interfaces;
+using Int20h2025.Common.Exceptions;
 using Int20h2025.Common.Models.Ai;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using Microsoft.VisualStudio.Services.OAuth;
+using Microsoft.VisualStudio.Services.WebApi;
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Int20h2025.BLL.Services
 {
-    public class AzureDevOpsService : ITaskManager
+    public class AzureDevOpsService(IUserContextService userContextService) : ITaskManager
     {
         public string SystemName { get; init; } = "AzureDevOps";
-
+        private readonly string _devOpsOrgUrl = "https://dev.azure.com/";
         public async Task<OperationResult> ExecuteMethodAsync(string methodName, JObject parameters)
         {
             switch (methodName)
             {
                 case "CreateTask":
                     var title = parameters["title"].ToString();
+                    var organizationName = parameters["organizationName"].ToString();
+                    var projectName = parameters["projectName"].ToString();
                     var assignedTo = parameters["assignedTo"].ToString();
-                    return await CreateTaskAsync(title, assignedTo);
+                    return await CreateTaskAsync(title, organizationName, projectName, assignedTo);
 
                 case "UpdateTask":
                     var parseUpdateTaskIdsuccess = int.TryParse(parameters[0].ToString(), out var updateTaskId);
@@ -65,6 +73,18 @@ namespace Int20h2025.BLL.Services
                             },
                             new ParameterInfo
                             {
+                                Name = "projectName",
+                                Type = "string",
+                                Description = "Name of project to create task name."
+                            },
+                            new ParameterInfo
+                            {
+                                Name = "organizationName",
+                                Type = "string",
+                                Description = "Name of organization to create task name."
+                            },
+                            new ParameterInfo
+                            {
                                 Name = "assignedTo",
                                 Type = "string",
                                 Description = "Email of user to be assigned."
@@ -109,8 +129,39 @@ namespace Int20h2025.BLL.Services
             };
         }
 
-        private async Task<OperationResult> CreateTaskAsync(string title, string assignedTo)
+        private async Task<OperationResult> CreateTaskAsync(string title,string organizationName, string projectName, string assignedTo)
         {
+            var accessToken = userContextService.UserData ?? throw new InternalPointerBobrException("User must sign in devops firstly.");
+            var credentials = new VssOAuthAccessTokenCredential(accessToken);
+            using (var connection = new VssConnection(new Uri(_devOpsOrgUrl + organizationName), credentials))
+            {
+                var workItemClient = connection.GetClient<WorkItemTrackingHttpClient>();
+
+                var patchDocument = new JsonPatchDocument
+                {
+                    new JsonPatchOperation
+                    {
+                        Operation = Microsoft.VisualStudio.Services.WebApi.Patch.Operation.Add,
+                        Path = "/fields/System.Title",
+                        Value = title
+                    },
+                    new JsonPatchOperation
+                    {
+                        Operation = Microsoft.VisualStudio.Services.WebApi.Patch.Operation.Add,
+                        Path = "/fields/System.Description",
+                        Value = "Created via Azure DevOps API with OAuth"
+                    },
+                    new JsonPatchOperation
+                    {
+                        Operation = Microsoft.VisualStudio.Services.WebApi.Patch.Operation.Add,
+                        Path = "/fields/System.AssignedTo",
+                        Value = assignedTo
+                    }
+                };
+
+                var workItem = await workItemClient.CreateWorkItemAsync(patchDocument, projectName, "Task");
+            }
+
             return new OperationResult { Response = $"Задачу '{title}' створено та призначено {assignedTo}.", Success = true };
         }
 

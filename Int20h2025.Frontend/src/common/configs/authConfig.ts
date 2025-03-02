@@ -1,18 +1,14 @@
 import { PublicClientApplication } from '@azure/msal-browser';
 
-const clientId = import.meta.env.VITE_AZURE_CLIENT_ID;
-const applicationIdUri = import.meta.env.VITE_APPLICATION_ID_URI;
-const redirectUri = import.meta.env.VITE_APPLICATION_REDIRECT_URI;
-
 const loginRequest = {
-  scopes: ['openid', 'profile', 'email', `api://${applicationIdUri}/user_impersonation`],
+  scopes: [import.meta.env.VITE_AZURE_SCOPES],
 };
 
 const msalConfig = {
   auth: {
-    clientId,
-    authority: 'https://login.microsoftonline.com/common',
-    redirectUri,
+    clientId: import.meta.env.VITE_AZURE_CLIENT_ID,
+    authority: import.meta.env.VITE_AZURE_AUTHORITY,
+    redirectUri: import.meta.env.VITE_APPLICATION_REDIRECT_URI
   },
   cache: {
     cacheLocation: 'sessionStorage',

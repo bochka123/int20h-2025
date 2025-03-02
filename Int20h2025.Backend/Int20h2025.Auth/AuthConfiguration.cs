@@ -11,6 +11,7 @@ namespace Int20h2025.Auth
     {
         public static IServiceCollection AddAuth(this IServiceCollection services)
         {
+            services.AddMemoryCache();
             services.AddHttpContextAccessor();
             services.AddScoped<IAuthService, CookieAuthService>();
             services.AddScoped<IAccessTokenService, AccessTokenService>();
